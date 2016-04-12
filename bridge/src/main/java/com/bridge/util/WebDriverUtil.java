@@ -170,4 +170,9 @@ public class WebDriverUtil {
 	public static void switchBackToParentWindow(WebDriver driver, String parentHandle) {
 		driver.switchTo().window(parentHandle);
 	}
+	
+	public static void switchToIframe(WebDriver driver,WebElement iframe){
+		LOG.info("switch to iframe");
+		driver.switchTo().frame(iframe);
+	}
 }
