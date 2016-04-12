@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.bridge.pages.alibaba.LoginPage;
+import com.bridge.pages.alibaba.ItemListPage;
 import com.bridge.util.WebDriverUtil;
 
 public class alibaba {
@@ -20,7 +21,7 @@ public class alibaba {
 	}
 	
 	@Test
-	public void taobaoLogin(){
+	public void aliLogin(){
 		
 		//driver.get("https://www.taobao.com/");
 		//driver.findElement(By.linkText("亲，请登录")).click();
@@ -33,11 +34,17 @@ public class alibaba {
 		loginPage.login("", "");
 	}
 	
-	//@Test(dependsOnMethods="taobaoLogin")
-	public void getBaoBeiInfo(){
+	@Test(dependsOnMethods="aliLogin")
+	public void getInfo(){
 		
-		WebDriverUtil.waitForElementPresent(driver, By.linkText("已买到宝贝"), 15);
+		WebDriverUtil.waitForElementPresent(driver, By.linkText("我的阿里"), 15);
 		
-		driver.findElement(By.linkText("已买到宝贝")).click();
+		WebDriverUtil.hoverOnElement(driver.findElement(By.linkText("我的阿里")), driver);
+		
+		driver.findElement(By.linkText("已买到货品")).click();
+		
+		ItemListPage itemPage = new ItemListPage(driver);
+		
+		itemPage.getItemInfo();
 	}
 }

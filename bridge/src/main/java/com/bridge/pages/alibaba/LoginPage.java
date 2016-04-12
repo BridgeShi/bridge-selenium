@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -27,6 +28,9 @@ public class LoginPage {
 	@FindBy(css="#loginchina iframe")
 	WebElement loginFrame;
 	
+	@FindBy(id="_n1z")
+	WebElement captchaArrow;
+	
 	private String url = "https://login.1688.com/member/signin.htm";
 	
 	public LoginPage(final WebDriver driver) {
@@ -44,8 +48,16 @@ public class LoginPage {
 		LOG.debug("Entering username and password");
 		this.userName.sendKeys(userName);
 		this.passWord.sendKeys(passWord);
+		//captcha();
 		LOG.debug("Submit login");
 		submitBtn.click();
 	}
 	
+	public void captcha(){
+		Actions actions = new Actions(driver);
+		WebDriverUtil.waitForElementPresent(driver, By.id("_n1z"), 10);
+		LOG.debug("captcha");
+		actions.dragAndDropBy(captchaArrow, 258, 0);
+		actions.perform();
+	}
 }
