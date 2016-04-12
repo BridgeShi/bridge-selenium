@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -18,23 +17,27 @@ import com.bridge.util.WebDriverUtil;
 public class ItemListPage {
 	private static final Log LOG = LogFactory.getLog(ItemListPage.class);
 
-	private static String orderIdXpath = "//div[@class='trade-order-mainClose']//span[contains(.,'订单号')]/following-sibling::span[2]";
+	private static String orderIdXpath = ".//span[contains(.,'订单号')]/following-sibling::span[2]";
 	
-	private static String orderDateXpath = "//div[@class='trade-order-mainClose']//strong[@title]";
+	private static String orderDateXpath = ".//strong[@title]";
 	
-	private static String sellerXpath = "//div[@class='trade-order-mainClose']//a[@class='tp-tag-a'][@title][contains(@href,'user_number_id')]";
+	private static String sellerXpath = ".//a[@class='tp-tag-a'][@title][contains(@href,'user_number_id')]";
 	
-	private static String goodsNameXpath = "//div[@class='trade-order-mainClose']//a[contains(@href,'item.htm?id')]/span | //div[@class='trade-order-mainClose']//a[contains(@href,'item_id_num')]/span";
+	private static String goodsNameXpath = ".//a[contains(@href,'item.htm?id')]/span | .//a[contains(@href,'item_id_num')]/span";
 	
-	private static String goodsIdXpath = "//div[@class='trade-order-mainClose']//a[contains(@href,'item.htm?id')]| //div[@class='trade-order-mainClose']//a[contains(@href,'item_id_num')]";
+	private static String goodsIdXpath = ".//a[contains(@href,'item.htm?id')] | .//a[contains(@href,'item_id_num')]";
 	
-	private static String goodsPriceXpath = "//div[@class='trade-order-mainClose']//tr[.//img]/td[2]/div[@style='font-family:verdana;font-style:normal;']/p[not(./del)]";
+	private static String goodsPriceXpath = "./td[2]/div[@style='font-family:verdana;font-style:normal;']/p[not(./del)]";
 	
-	private static String goodsNumXpath = "//div[@class='trade-order-mainClose']//tr[.//img]/td[3]//div";
+	private static String goodsNumXpath = "./td[3]//div";
 	
-	private static String orderPriceXpath = "//div[@class='trade-order-mainClose']//td[.//p/strong]";
+	private static String orderPriceXpath = ".//td[.//p/strong]";
 	
-	private static String orderStatusXpath = "//div[@class='trade-order-mainClose']//table[2]//tr[2]//td[6]/div/div[1]";
+	private static String orderStatusXpath = ".//table[2]//tr[2]//td[6]/div/div[1]";
+	
+	private static String goodsRowXpath = ".//table[2]//tr[.//img]";
+	
+	private static String shipLinkXpath = ".//a[@class='tp-tag-a'][contains(@href,'wuliu')]";
 	
 	protected WebDriver driver;
 	
@@ -48,18 +51,37 @@ public class ItemListPage {
 	
 	public void getItemInfo(){
 		WebDriverUtil.waitForElementPresent(driver, By.className("trade-order-mainClose"), 10);
+		//获得有多少个订单，然后遍历
 		for(WebElement order : orderList){
 			
+			String orderStatus = order.findElement(By.xpath(orderStatusXpath)).getText();
+			LOG.info("订单号："+order.findElement(By.xpath(orderIdXpath)).getText());
+			LOG.info("订单日期："+order.findElement(By.xpath(orderDateXpath)).getText());
+			LOG.info("商家名："+order.findElement(By.xpath(sellerXpath)).getText());
+			LOG.info("订单总价："+order.findElement(By.xpath(orderPriceXpath)).getText());
+			LOG.info("订单状态："+orderStatus);
+			
+			//获得订单中有多少个商品
+			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
+			for(WebElement good : goodsList){
+				LOG.info("商品名称："+good.findElement(By.xpath(goodsNameXpath)).getText());
+				LOG.info("商品ID："+getItemId(good.findElement(By.xpath(goodsIdXpath)).getAttribute("href")));
+				LOG.info("商品价格："+good.findElement(By.xpath(goodsPriceXpath)).getText());
+				LOG.info("商品数量："+good.findElement(By.xpath(goodsNumXpath)).getText());
+			}
+			
+			
+			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.equals("交易成功")){
+				//点击物流详情查看物流信息
+				order.findElement(By.xpath(shipLinkXpath)).click();
+				String parentHanle = driver.getWindowHandle();
+				WebDriverUtil.switchWindows(driver);
+				ShipStatusPage shipPage = new ShipStatusPage(driver);
+				shipPage.getShipInfo();
+				driver.close();
+				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
+			}
 		}
-		LOG.info("订单号："+driver.findElement(By.xpath(orderIdXpath)).getText());
-		LOG.info("订单日期："+driver.findElement(By.xpath(orderDateXpath)).getText());
-		LOG.info("商家名："+driver.findElement(By.xpath(sellerXpath)).getText());
-		LOG.info("订单总价："+driver.findElement(By.xpath(orderPriceXpath)).getText());
-		LOG.info("订单状态："+driver.findElement(By.xpath(orderStatusXpath)).getText());
-		LOG.info("商品名称："+driver.findElement(By.xpath(goodsNameXpath)).getText());
-		LOG.info("商品名称："+getItemId(driver.findElement(By.xpath(goodsIdXpath)).getAttribute("href")));
-		LOG.info("商品价格："+driver.findElement(By.xpath(goodsPriceXpath)).getText());
-		LOG.info("商品数量："+driver.findElement(By.xpath(goodsNumXpath)).getText());
 	}
 	
 	public static String getItemId(String url){
@@ -69,7 +91,18 @@ public class ItemListPage {
 	    if(m.find()){
 	    	findString = m.group(0);
 	    }
-	    System.out.println(findString);
 		return findString;
+	}
+	
+	public boolean verifyShipInfoExist(WebElement order, By elementLocator){
+
+		if (order.findElements(elementLocator).size() > 0) {
+			LOG.info("element: " + elementLocator.toString()+" found");
+			return true;
+		}else
+		{
+			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
+			return false;
+		}
 	}
 }
