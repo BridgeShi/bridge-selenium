@@ -17,9 +17,8 @@ public class taobao {
 	
 	@BeforeTest
 	public void getWebDriver(){
-		this.driver = new FirefoxDriver();
+		taobao.driver = new FirefoxDriver();
 	}
-	
 	
 	@Test
 	public void taobaoLogin(){
