@@ -50,7 +50,7 @@ public class ItemListPage {
 			LOG.info("订单状态："+orderStatus);
 			
 			//获得订单中有多少个商品
-			List<WebElement> goodsList = order.findElements(By.cssSelector(goodsRowXpath));
+			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
 			for(WebElement good : goodsList){
 				LOG.info("商品名称："+good.findElement(By.className("productName")).getText());
 				LOG.info("商品ID："+getItemId(good.findElement(By.className("productName")).getAttribute("href")));
