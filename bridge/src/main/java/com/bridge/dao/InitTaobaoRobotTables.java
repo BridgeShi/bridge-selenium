@@ -13,7 +13,7 @@ public class InitTaobaoRobotTables {
 			+ "orderid VARCHAR(100), orderdate VARCHAR(100), seller VARCHAR(100), "
 			+ "totalprice VARCHAR(100), orderstatus VARCHAR(100), "
 			+ "itemname VARCHAR(100), itemid VARCHAR(100), itemprice VARCHAR(100), itemqty VARCHAR(100), "
-			+ "shipno VARCHAR(100), shipper VARCHAR(100), shipstatus VARCHAR(100) ) "
+			+ "shipno VARCHAR(100), shipper VARCHAR(100), shipstatus VARCHAR(500) ) "
 			+ "DEFAULT CHARSET=utf8";
 
 	public static Connection getConnection() throws Exception {
