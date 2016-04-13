@@ -41,7 +41,7 @@ public class ItemListPage {
 	
 	protected WebDriver driver;
 	
-	@FindBy(className="trade-order-mainClose")
+	@FindBy(css="div[class^=trade-order-main]")
 	List<WebElement> orderList;
 		
 	public ItemListPage(final WebDriver driver) {
@@ -70,8 +70,7 @@ public class ItemListPage {
 				LOG.info("商品数量："+good.findElement(By.xpath(goodsNumXpath)).getText());
 			}
 			
-			
-			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.equals("交易成功")){
+			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
 				//点击物流详情查看物流信息
 				order.findElement(By.xpath(shipLinkXpath)).click();
 				String parentHanle = driver.getWindowHandle();

@@ -31,7 +31,7 @@ public class ShipStatusPage {
 	
 	public void getShipInfo(){
 		LOG.debug("get ship Info");
-		WebDriverUtil.waitForElementPresent(driver, By.className("logistics-item"), 15);
+		WebDriverUtil.waitForElementPresent(driver, By.xpath("//*[./*='运单号码：']/*[2]"), 15);
 		LOG.info("运单号码: "+shipNumber.getText());
 		LOG.info("物流公司: "+shipperName.getText());
 		LOG.info("最新物流状态: "+latestStatus.getText());	
