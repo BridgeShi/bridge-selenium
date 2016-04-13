@@ -7,6 +7,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.bridge.dao.Account;
+import com.bridge.dao.AccountDAO;
 import com.bridge.pages.taobao.ItemListPage;
 import com.bridge.pages.taobao.LoginPage;
 import com.bridge.util.WebDriverUtil;
@@ -14,6 +16,9 @@ import com.bridge.util.WebDriverUtil;
 public class taobao {
 
 	private static WebDriver driver;
+	
+	private static Account account = null;
+	private static AccountDAO accountDAO = null;
 	
 	@BeforeTest
 	public void getWebDriver(){
@@ -31,7 +36,10 @@ public class taobao {
 		
 		loginPage.getUrl();
 		
-		loginPage.login("", "");
+		accountDAO = new AccountDAO();
+		account = accountDAO.getAccount("taobao");
+		
+		loginPage.login(account.getAccount(), account.getPassword());
 	}
 	
 	@Test(dependsOnMethods="taobaoLogin")

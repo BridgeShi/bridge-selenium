@@ -8,12 +8,17 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.bridge.pages.alibaba.LoginPage;
+import com.bridge.dao.Account;
+import com.bridge.dao.AccountDAO;
 import com.bridge.pages.alibaba.ItemListPage;
 import com.bridge.util.WebDriverUtil;
 
 public class alibaba {
 
 	private static WebDriver driver;
+	
+	private static Account account = null;
+	private static AccountDAO accountDAO = null;
 	
 	@BeforeTest
 	public void getWebDriver(){
@@ -31,7 +36,11 @@ public class alibaba {
 		
 		loginPage.getUrl();
 		
-		loginPage.login("", "");
+		accountDAO = new AccountDAO();
+		account = accountDAO.getAccount("ali1688");
+		
+		loginPage.login(account.getAccount(), account.getPassword());
+		
 	}
 	
 	@Test(dependsOnMethods="aliLogin")
