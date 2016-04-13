@@ -90,6 +90,7 @@ public class ItemListPage {
 				shipPage.getShipInfo(orderid);
 				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
+				WebDriverUtil.switchToIframe(driver, iframe);
 			}
 		}
 	}

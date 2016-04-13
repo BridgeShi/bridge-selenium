@@ -42,11 +42,11 @@ public class ItemListPage {
 	
 	protected WebDriver driver;
 	
+	@FindBy(css="div[class^=trade-order-main]")
+	List<WebElement> orderList;
+	
 	private TaobaoDAO tbDAO = new TaobaoDAO();
 	
-	@FindBy(className="trade-order-mainClose")
-	List<WebElement> orderList;
-		
 	public ItemListPage(final WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
@@ -93,8 +93,7 @@ public class ItemListPage {
 				
 			}
 			
-			
-			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.equals("交易成功")){
+			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
 				//点击物流详情查看物流信息
 				order.findElement(By.xpath(shipLinkXpath)).click();
 				String parentHanle = driver.getWindowHandle();
