@@ -9,7 +9,7 @@ public class DBManager {
 		String driver = "com.mysql.jdbc.Driver";
 		String url = "jdbc:mysql://localhost/tbrobot?useUnicode=true&characterEncoding=utf-8";
 		String username = "root";
-		String password = "123456";
+		String password = "bridge1234";
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, username, password);
 		return conn;

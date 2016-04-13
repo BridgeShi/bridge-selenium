@@ -11,12 +11,12 @@ public class TaobaoDAO {
 	private PreparedStatement preparedStmt = null;
 
 	private String insertquery = " insert into TB_ORDER_HISTORY (orderid, orderdate, seller, totalprice, orderstatus, "
-			+ "itemname, itemid, itemprice, itemqty) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "itemname, itemid, itemprice, itemqty, sku) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	private String updatequery = "update TB_ORDER_HISTORY set shipno = ?, shipper = ?, shipstatus = ? where orderid = ?";
 
 	public void insert(String orderid, String orderdate, String seller, String totalprice, String orderstatus,
-			String itemname, String itemid, String itemprice, String itemqty) {
+			String itemname, String itemid, String itemprice, String itemqty,String sku) {
 
 		try {
 			conn = DBManager.getConnection();
@@ -35,6 +35,7 @@ public class TaobaoDAO {
 			preparedStmt.setString (7, itemid);
 			preparedStmt.setString (8, itemprice);
 			preparedStmt.setString (9, itemqty);
+			preparedStmt.setString (10, sku);
 			
 			preparedStmt.execute();
 			conn.close();

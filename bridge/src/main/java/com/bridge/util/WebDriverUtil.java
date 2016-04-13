@@ -175,4 +175,15 @@ public class WebDriverUtil {
 		LOG.info("switch to iframe");
 		driver.switchTo().frame(iframe);
 	}
+	
+	public static boolean verifyElementExistBasedOnElement(WebDriver driver,WebElement baseElement, By elementLocator){
+		if (baseElement.findElements(elementLocator).size() > 0) {
+			LOG.info("element: " + elementLocator.toString()+" found");
+			return true;
+		}else
+		{
+			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
+			return false;
+		}
+	}
 }

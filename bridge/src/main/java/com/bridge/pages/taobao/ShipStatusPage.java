@@ -39,10 +39,10 @@ public class ShipStatusPage extends BasePage{
 					+latestStatus.findElement(By.cssSelector(".time")).getText()+" "
 					+latestStatus.findElement(By.cssSelector(".text")).getText()
 			);
-			/*tbDAO.update(shipNumber.getText(), shipperName.getText(), latestStatus.findElement(By.cssSelector(".date")).getText()+" "
+			tbDAO.update(shipNumber.getText(), shipperName.getText(), latestStatus.findElement(By.cssSelector(".date")).getText()+" "
 					+latestStatus.findElement(By.cssSelector(".week")).getText()+" "
 					+latestStatus.findElement(By.cssSelector(".time")).getText()+" "
-					+latestStatus.findElement(By.cssSelector(".text")).getText(), orderid);*/
+					+latestStatus.findElement(By.cssSelector(".text")).getText(), orderid);
 		}else
 		{
 			WebDriverUtil.waitForElementPresent(driver, By.className("wl-orderDesc"), 15);

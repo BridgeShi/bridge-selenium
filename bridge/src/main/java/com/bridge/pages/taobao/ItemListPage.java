@@ -31,14 +31,16 @@ public class ItemListPage extends BasePage{
 	
 	private static String goodsNumXpath = "./td[3]//div";
 	
-	private static String orderPriceXpath = ".//td[.//p/strong]";
+	private static String orderPriceXpath = ".//td[.//p/strong]//strong";
 	
 	private static String orderStatusXpath = ".//table[2]//tr[2]//td[6]/div/div[1]";
 	
 	private static String goodsRowXpath = ".//table[2]//tr[.//img]";
 	
 	private static String shipLinkXpath = ".//a[@class='tp-tag-a'][contains(@href,'wuliu')]";
-		
+	
+	private static String skuXpath = ".//div[@style='margin-top:8px;margin-bottom:0;color:#9C9C9C;']";
+	
 	@FindBy(css="div[class^=trade-order-main]")
 	List<WebElement> orderList;
 	
@@ -116,11 +118,15 @@ public class ItemListPage extends BasePage{
 				String itemquantity = good.findElement(By.xpath(goodsNumXpath)).getText();
 				LOG.info("商品数量："+itemquantity);
 				
-				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity);
+				String itemSku = "";
+				if(WebDriverUtil.verifyElementExistBasedOnElement(driver,good, By.xpath(skuXpath))){
+					itemSku = good.findElement(By.xpath(skuXpath)).getText();
+				}
 				
+				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);
 			}
 			
-			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
+			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
 				WebElement shipLink = order.findElement(By.xpath(shipLinkXpath));
 				//shipLink.click();
 				//获取链接地址打开新窗口查看

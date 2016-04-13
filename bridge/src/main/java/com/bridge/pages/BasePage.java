@@ -44,16 +44,6 @@ public class BasePage {
 	    LOG.info("total pages:"+findString);
 		return Integer.parseInt(findString);
 	}
-	
-	public boolean verifyShipInfoExist(WebElement order, By elementLocator){
-		if (order.findElements(elementLocator).size() > 0) {
-			LOG.info("element: " + elementLocator.toString()+" found");
-			return true;
-		}else
-		{
-			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
-			return false;
-		}
-	}
+
 
 }

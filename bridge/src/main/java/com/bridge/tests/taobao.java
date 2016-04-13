@@ -40,7 +40,7 @@ public class taobao {
 		
 		loginPage.login(account.getAccount(), account.getPassword());
 		
-		loginPage.login("", "");
+		//loginPage.login("", "");
 	}
 	
 	@Test(dependsOnMethods="taobaoLogin")
