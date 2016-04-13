@@ -8,12 +8,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.TaobaoDAO;
 import com.bridge.util.WebDriverUtil;
 
 public class ShipStatusPage {
 	private static final Log LOG = LogFactory.getLog(ShipStatusPage.class);
 
 	protected WebDriver driver;
+	
+	private TaobaoDAO tbDAO = new TaobaoDAO();
 	
 	@FindBy(xpath="//label[contains(.,'物流公司')]/following-sibling::span")
 	WebElement shipperName;
@@ -29,7 +32,7 @@ public class ShipStatusPage {
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getShipInfo(){
+	public void getShipInfo(String orderid){
 		LOG.debug("get ship Info");
 		if(driver.getTitle().contains("物流详情")){
 			WebDriverUtil.waitForElementPresent(driver, By.className("package-status"), 15);
@@ -39,7 +42,11 @@ public class ShipStatusPage {
 					+latestStatus.findElement(By.cssSelector(".week")).getText()+" "
 					+latestStatus.findElement(By.cssSelector(".time")).getText()+" "
 					+latestStatus.findElement(By.cssSelector(".text")).getText()
-			);	
+			);
+			tbDAO.update(shipNumber.getText(), shipperName.getText(), latestStatus.findElement(By.cssSelector(".date")).getText()+" "
+					+latestStatus.findElement(By.cssSelector(".week")).getText()+" "
+					+latestStatus.findElement(By.cssSelector(".time")).getText()+" "
+					+latestStatus.findElement(By.cssSelector(".text")).getText(), orderid);
 		}else
 		{
 			WebDriverUtil.waitForElementPresent(driver, By.className("wl-orderDesc"), 15);

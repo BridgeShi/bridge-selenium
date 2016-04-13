@@ -12,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.TaobaoDAO;
 import com.bridge.util.WebDriverUtil;
 
 public class ItemListPage {
@@ -41,6 +42,8 @@ public class ItemListPage {
 	
 	protected WebDriver driver;
 	
+	private TaobaoDAO tbDAO = new TaobaoDAO();
+	
 	@FindBy(className="trade-order-mainClose")
 	List<WebElement> orderList;
 		
@@ -55,19 +58,39 @@ public class ItemListPage {
 		for(WebElement order : orderList){
 			
 			String orderStatus = order.findElement(By.xpath(orderStatusXpath)).getText();
-			LOG.info("订单号："+order.findElement(By.xpath(orderIdXpath)).getText());
-			LOG.info("订单日期："+order.findElement(By.xpath(orderDateXpath)).getText());
-			LOG.info("商家名："+order.findElement(By.xpath(sellerXpath)).getText());
-			LOG.info("订单总价："+order.findElement(By.xpath(orderPriceXpath)).getText());
+
+			String orderid = order.findElement(By.xpath(orderIdXpath)).getText();
+			LOG.info("订单号："+orderid);
+			
+			String orderdate = order.findElement(By.xpath(orderDateXpath)).getText();
+			LOG.info("订单日期："+orderdate);
+			
+			String seller = order.findElement(By.xpath(sellerXpath)).getText();
+			LOG.info("商家名："+seller);
+			
+			String orderprice = order.findElement(By.xpath(orderPriceXpath)).getText();
+			LOG.info("订单总价："+orderprice);
+			
 			LOG.info("订单状态："+orderStatus);
 			
 			//获得订单中有多少个商品
 			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
 			for(WebElement good : goodsList){
-				LOG.info("商品名称："+good.findElement(By.xpath(goodsNameXpath)).getText());
-				LOG.info("商品ID："+getItemId(good.findElement(By.xpath(goodsIdXpath)).getAttribute("href")));
-				LOG.info("商品价格："+good.findElement(By.xpath(goodsPriceXpath)).getText());
-				LOG.info("商品数量："+good.findElement(By.xpath(goodsNumXpath)).getText());
+				
+				String itemname = good.findElement(By.xpath(goodsNameXpath)).getText();
+				LOG.info("商品名称："+itemname);
+				
+				String itemid = getItemId(good.findElement(By.xpath(goodsIdXpath)).getAttribute("href"));
+				LOG.info("商品ID："+itemid);
+				
+				String itemprice = good.findElement(By.xpath(goodsPriceXpath)).getText();
+				LOG.info("商品价格："+itemprice);
+				
+				String itemquantity = good.findElement(By.xpath(goodsNumXpath)).getText();
+				LOG.info("商品数量："+itemquantity);
+				
+				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity);
+				
 			}
 			
 			
@@ -77,7 +100,7 @@ public class ItemListPage {
 				String parentHanle = driver.getWindowHandle();
 				WebDriverUtil.switchWindows(driver);
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
-				shipPage.getShipInfo();
+				shipPage.getShipInfo(orderid);
 				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 			}
