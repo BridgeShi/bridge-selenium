@@ -12,6 +12,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.Ali1688DAO;
+import com.bridge.dao.TaobaoDAO;
 import com.bridge.pages.alibaba.ShipStatusPage;
 import com.bridge.util.WebDriverUtil;
 
@@ -19,6 +21,8 @@ public class ItemListPage {
 	private static final Log LOG = LogFactory.getLog(ItemListPage.class);
 	
 	private static String goodsRowXpath = ".//td[@class='detail']//tr[.//img]";
+	
+	private Ali1688DAO aliDAO = new Ali1688DAO();
 	
 	protected WebDriver driver;
 	
@@ -43,19 +47,38 @@ public class ItemListPage {
 		for(WebElement order : orderList){
 			
 			String orderStatus = order.findElement(By.cssSelector(".s7")).getText();
-			LOG.info("订单号："+order.findElement(By.className("title-order")).getText());
-			LOG.info("订单日期："+order.findElement(By.className("date")).getText());
-			LOG.info("商家名："+order.findElement(By.cssSelector(".seller-name > a")).getText());
-			LOG.info("订单总价："+order.findElement(By.cssSelector(".s6 .total")).getText());
+			
+			String orderid = order.findElement(By.className("title-order")).getText();
+			LOG.info("订单号："+orderid);
+			
+			String orderdate = order.findElement(By.className("date")).getText();
+			LOG.info("订单日期："+orderdate);
+			
+			String seller = order.findElement(By.cssSelector(".seller-name > a")).getText();
+			LOG.info("商家名："+seller);
+			
+			String orderprice = order.findElement(By.cssSelector(".s6 .total")).getText();
+			LOG.info("订单总价："+orderprice);
+			
 			LOG.info("订单状态："+orderStatus);
 			
 			//获得订单中有多少个商品
 			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
 			for(WebElement good : goodsList){
-				LOG.info("商品名称："+good.findElement(By.className("productName")).getText());
-				LOG.info("商品ID："+getItemId(good.findElement(By.className("productName")).getAttribute("href")));
-				LOG.info("商品价格："+good.findElement(By.cssSelector("td.s3 strong")).getText());
-				LOG.info("商品数量："+good.findElement(By.className("s4")).getText());
+				String itemname = good.findElement(By.className("productName")).getText();
+				LOG.info("商品名称："+itemname);
+				
+				String itemid = getItemId(good.findElement(By.className("productName")).getAttribute("href"));
+				LOG.info("商品ID："+itemid);
+				
+				String itemprice = good.findElement(By.cssSelector("td.s3 strong")).getText();
+				LOG.info("商品价格："+itemprice);
+				
+				String itemquantity = good.findElement(By.className("s4")).getText();
+				LOG.info("商品数量："+itemquantity);
+				
+				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity);
+
 			}
 			
 			if(verifyShipInfoExist(order, By.linkText("查看物流")) && orderStatus.equals("等待买家确认收货")){
@@ -64,7 +87,7 @@ public class ItemListPage {
 				String parentHanle = driver.getWindowHandle();
 				WebDriverUtil.switchWindows(driver);
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
-				shipPage.getShipInfo();
+				shipPage.getShipInfo(orderid);
 				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 			}

@@ -8,12 +8,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.Ali1688DAO;
+import com.bridge.dao.TaobaoDAO;
 import com.bridge.util.WebDriverUtil;
 
 public class ShipStatusPage {
 	private static final Log LOG = LogFactory.getLog(ShipStatusPage.class);
 
 	protected WebDriver driver;
+	
+	private Ali1688DAO aliDAO = new Ali1688DAO();
 	
 	@FindBy(xpath="//*[./*='物流公司：']/*[2]")
 	WebElement shipperName;
@@ -29,11 +33,13 @@ public class ShipStatusPage {
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getShipInfo(){
+	public void getShipInfo(String orderid){
 		LOG.debug("get ship Info");
 		WebDriverUtil.waitForElementPresent(driver, By.className("logistics-item"), 15);
 		LOG.info("运单号码: "+shipNumber.getText());
 		LOG.info("物流公司: "+shipperName.getText());
 		LOG.info("最新物流状态: "+latestStatus.getText());	
+		
+		aliDAO.update(shipNumber.getText(), shipperName.getText(), latestStatus.getText(), orderid);
 	}
 }

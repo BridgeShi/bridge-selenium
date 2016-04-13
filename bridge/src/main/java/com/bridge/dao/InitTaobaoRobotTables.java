@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InitDB {
+public class InitTaobaoRobotTables {
 
 	private static final String TB_ORDER_TABLE = "create table TB_ORDER_HISTORY ("
 			+ "orderid VARCHAR(100), orderdate VARCHAR(100), seller VARCHAR(100), "
