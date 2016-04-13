@@ -1,21 +1,20 @@
 package com.bridge.pages.taobao;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import com.bridge.dao.TaobaoDAO;
+import com.bridge.pages.BasePage;
 import com.bridge.util.WebDriverUtil;
 
-public class ItemListPage {
+public class ItemListPage extends BasePage{
 	private static final Log LOG = LogFactory.getLog(ItemListPage.class);
 
 	private static String orderIdXpath = ".//span[contains(.,'订单号')]/following-sibling::span[2]";
@@ -39,21 +38,49 @@ public class ItemListPage {
 	private static String goodsRowXpath = ".//table[2]//tr[.//img]";
 	
 	private static String shipLinkXpath = ".//a[@class='tp-tag-a'][contains(@href,'wuliu')]";
-	
-	protected WebDriver driver;
-	
+		
 	@FindBy(css="div[class^=trade-order-main]")
 	List<WebElement> orderList;
 	
-	private TaobaoDAO tbDAO = new TaobaoDAO();
+	@FindBy(css=".tp-common-btn[style*='rgb(255, 255, 255)']")
+	WebElement currentPage;
 	
-	public ItemListPage(final WebDriver driver) {
-		this.driver = driver;
+	@FindBy(xpath="//span[./span='页']/span[contains(.,'共')]")
+	WebElement totalPages;
+	
+	@FindBy(xpath="//span[text()='下一页']")
+	WebElement nextPage;
+	
+	//private TaobaoDAO tbDAO = new TaobaoDAO();
+	
+	public ItemListPage(WebDriver driver) {
+		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getItemInfo(){
-		WebDriverUtil.waitForElementPresent(driver, By.className("trade-order-mainClose"), 10);
+	public void getItemInfo(int pages){
+		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("div[class^=trade-order-main]"), 10);
+		//获得一共多少页
+		int totalPages = getTotalPages(this.totalPages.getText());
+		
+		//如果总共页数小于要获取的
+		if(totalPages < pages)
+			pages = totalPages;
+		
+		for(int i=1;i<=pages;i++){
+			//
+			getOrderFromSinglePage();
+			
+			if(i != pages){
+				//获取第一个订单的ID来判断翻页是否完成
+				String firstOrderId = orderList.get(0).findElement(By.xpath(orderIdXpath)).getText();
+				nextPage.click();
+				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//span[text()='"+firstOrderId+"']"), 15);
+			}
+		}
+	}
+	
+	public void getOrderFromSinglePage(){
 		//获得有多少个订单，然后遍历
 		for(WebElement order : orderList){
 			
@@ -94,8 +121,13 @@ public class ItemListPage {
 			}
 			
 			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
-				//点击物流详情查看物流信息
-				order.findElement(By.xpath(shipLinkXpath)).click();
+				WebElement shipLink = order.findElement(By.xpath(shipLinkXpath));
+				//shipLink.click();
+				//获取链接地址打开新窗口查看
+				String href = shipLink.getAttribute("href");
+				JavascriptExecutor executor = (JavascriptExecutor) driver;
+				executor.executeScript("window.open('" + href + "')");
+				
 				String parentHanle = driver.getWindowHandle();
 				WebDriverUtil.switchWindows(driver);
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
@@ -106,25 +138,4 @@ public class ItemListPage {
 		}
 	}
 	
-	public static String getItemId(String url){
-		Pattern p=Pattern.compile("(?<=id=|id_num=)\\d+");
-	    Matcher m=p.matcher(url);
-	    String findString = "";
-	    if(m.find()){
-	    	findString = m.group(0);
-	    }
-		return findString;
-	}
-	
-	public boolean verifyShipInfoExist(WebElement order, By elementLocator){
-
-		if (order.findElements(elementLocator).size() > 0) {
-			LOG.info("element: " + elementLocator.toString()+" found");
-			return true;
-		}else
-		{
-			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
-			return false;
-		}
-	}
 }

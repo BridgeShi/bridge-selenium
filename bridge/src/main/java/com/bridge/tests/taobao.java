@@ -31,7 +31,6 @@ public class taobao {
 		//driver.get("https://www.taobao.com/");
 		//driver.findElement(By.linkText("亲，请登录")).click();
 		
-		//step1
 		LoginPage loginPage = new LoginPage(driver);
 		
 		loginPage.getUrl();
@@ -40,6 +39,8 @@ public class taobao {
 		account = accountDAO.getAccount("taobao");
 		
 		loginPage.login(account.getAccount(), account.getPassword());
+		
+		loginPage.login("", "");
 	}
 	
 	@Test(dependsOnMethods="taobaoLogin")
@@ -51,6 +52,6 @@ public class taobao {
 		
 		ItemListPage itemPage = new ItemListPage(driver);
 		
-		itemPage.getItemInfo();
+		itemPage.getItemInfo(2);
 	}
 }
