@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+//import org.testng.annotations.Test;
 
 import com.bridge.pages.alibaba.LoginPage;
 import com.bridge.dao.Account;
@@ -25,8 +25,22 @@ public class alibaba {
 		alibaba.driver = new FirefoxDriver();
 	}
 	
-	@Test
-	public void aliLogin(){
+	public static void main(String args[]){
+		driver = new FirefoxDriver();
+		
+		aliLogin();
+		
+		//传递需要获取多少页的数据
+		getInfo(2);
+		
+		//关闭webdriver
+		driver.close();
+		
+		driver.quit();
+	}
+	
+	//@Test
+	public static void aliLogin(){
 		
 		//driver.get("https://www.taobao.com/");
 		//driver.findElement(By.linkText("亲，请登录")).click();
@@ -42,8 +56,8 @@ public class alibaba {
 		loginPage.login(account.getAccount(), account.getPassword());
 	}
 	
-	@Test(dependsOnMethods="aliLogin")
-	public void getInfo(){
+	//@Test(dependsOnMethods="aliLogin")
+	public static void getInfo(int pages){
 		
 		WebDriverUtil.waitForElementPresent(driver, By.linkText("我的阿里"), 15);
 		
@@ -53,6 +67,6 @@ public class alibaba {
 		
 		ItemListPage itemPage = new ItemListPage(driver);
 		
-		itemPage.getItemInfo(2);
+		itemPage.getItemInfo(pages);
 	}
 }

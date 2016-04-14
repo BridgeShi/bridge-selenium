@@ -25,8 +25,22 @@ public class taobao {
 		taobao.driver = new FirefoxDriver();
 	}
 	
-	@Test
-	public void taobaoLogin(){
+	public static void main(String args[]){
+		driver = new FirefoxDriver();
+		
+		taobaoLogin();
+		
+		//传递需要获取多少页的数据
+		getBaoBeiInfo(2);
+		
+		//关闭webdriver
+		driver.close();
+		
+		driver.quit();
+	}
+	
+	//@Test
+	public static void taobaoLogin(){
 		
 		//driver.get("https://www.taobao.com/");
 		//driver.findElement(By.linkText("亲，请登录")).click();
@@ -43,8 +57,8 @@ public class taobao {
 		//loginPage.login("", "");
 	}
 	
-	@Test(dependsOnMethods="taobaoLogin")
-	public void getBaoBeiInfo(){
+	//@Test(dependsOnMethods="taobaoLogin")
+	public static void getBaoBeiInfo(int pages){
 		
 		WebDriverUtil.waitForElementPresent(driver, By.linkText("已买到宝贝"), 15);
 		
@@ -52,6 +66,6 @@ public class taobao {
 		
 		ItemListPage itemPage = new ItemListPage(driver);
 		
-		itemPage.getItemInfo(2);
+		itemPage.getItemInfo(pages);
 	}
 }
