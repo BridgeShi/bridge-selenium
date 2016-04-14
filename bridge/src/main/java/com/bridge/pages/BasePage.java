@@ -5,11 +5,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.Ali1688DAO;
 import com.bridge.dao.TaobaoDAO;
 
 public class BasePage {
@@ -19,6 +18,8 @@ public class BasePage {
 	
 	protected TaobaoDAO tbDAO = new TaobaoDAO();
 	
+	protected Ali1688DAO aliDAO = new Ali1688DAO();
+
 	public BasePage(final WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
@@ -44,6 +45,14 @@ public class BasePage {
 	    LOG.info("total pages:"+findString);
 		return Integer.parseInt(findString);
 	}
-
-
+	
+	public static String getStringByRegex(String baseString,String regex){
+		Pattern p=Pattern.compile(regex);
+	    Matcher m=p.matcher(baseString);
+	    String findString = "";
+	    if(m.find()){
+	    	findString = m.group(0);
+	    }
+		return findString;
+	}
 }

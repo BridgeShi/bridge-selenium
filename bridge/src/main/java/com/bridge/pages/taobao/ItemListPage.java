@@ -121,6 +121,7 @@ public class ItemListPage extends BasePage{
 				String itemSku = "";
 				if(WebDriverUtil.verifyElementExistBasedOnElement(driver,good, By.xpath(skuXpath))){
 					itemSku = good.findElement(By.xpath(skuXpath)).getText();
+					LOG.info("SKU信息: "+itemSku);
 				}
 				
 				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);

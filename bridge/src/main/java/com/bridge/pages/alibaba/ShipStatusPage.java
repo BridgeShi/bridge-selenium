@@ -8,17 +8,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import com.bridge.dao.Ali1688DAO;
-import com.bridge.dao.TaobaoDAO;
+import com.bridge.pages.BasePage;
 import com.bridge.util.WebDriverUtil;
 
-public class ShipStatusPage {
+public class ShipStatusPage extends BasePage{
 	private static final Log LOG = LogFactory.getLog(ShipStatusPage.class);
-
-	protected WebDriver driver;
-	
-	private Ali1688DAO aliDAO = new Ali1688DAO();
-	
+		
 	@FindBy(xpath="//*[./*='物流公司：']/*[2]")
 	WebElement shipperName;
 	
@@ -28,8 +23,8 @@ public class ShipStatusPage {
 	@FindBy(xpath="//*[./*='物流跟踪：']//p[@class='fd-clr'] | //*[./*='物流跟踪：']/*[2]//li[last()]")
 	WebElement latestStatus;
 		
-	public ShipStatusPage(final WebDriver driver) {
-		this.driver = driver;
+	public ShipStatusPage(WebDriver driver) {
+		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	

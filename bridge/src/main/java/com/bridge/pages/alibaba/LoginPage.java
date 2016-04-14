@@ -9,12 +9,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.pages.BasePage;
 import com.bridge.util.WebDriverUtil;
 
-public class LoginPage {
+public class LoginPage extends BasePage{
 	private static final Log LOG = LogFactory.getLog(LoginPage.class);
-
-	protected WebDriver driver;
 
 	@FindBy(id="TPL_username_1")
 	WebElement userName;
@@ -33,8 +32,8 @@ public class LoginPage {
 	
 	private String url = "https://login.1688.com/member/signin.htm";
 	
-	public LoginPage(final WebDriver driver) {
-		this.driver = driver;
+	public LoginPage(WebDriver driver) {
+		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	

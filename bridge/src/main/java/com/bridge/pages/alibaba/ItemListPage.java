@@ -1,8 +1,6 @@
 package com.bridge.pages.alibaba;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,46 +10,74 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import com.bridge.dao.Ali1688DAO;
-import com.bridge.dao.TaobaoDAO;
+import com.bridge.pages.BasePage;
 import com.bridge.pages.alibaba.ShipStatusPage;
 import com.bridge.util.WebDriverUtil;
 
-public class ItemListPage {
+public class ItemListPage extends BasePage{
 	private static final Log LOG = LogFactory.getLog(ItemListPage.class);
 	
 	private static String goodsRowXpath = ".//td[@class='detail']//tr[.//img]";
-	
-	private Ali1688DAO aliDAO = new Ali1688DAO();
-	
-	protected WebDriver driver;
-	
+		
 	@FindBy(className="item-active")
 	List<WebElement> orderList;
 	
 	@FindBy(css=".layout_iframe iframe")
 	WebElement iframe;
 	
-	public ItemListPage(final WebDriver driver) {
-		this.driver = driver;
+	@FindBy(xpath="//div/span[contains(.,'共')]")
+	WebElement totalPages;
+	
+	@FindBy(xpath="//a[text()='下一页']")
+	WebElement nextPage;
+	
+	private String dataRegex = "(\\d{4})-(0\\d{1}|1[0-2])-(0\\d{1}|[12]\\d{1}|3[01]) "
+			+ "(0\\d{1}|1\\d{1}|2[0-3]):([0-5]\\d{1}):([0-5]\\d{1})";
+	
+	public ItemListPage(WebDriver driver) {
+		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getItemInfo(){
+	public void getItemInfo(int pages){
 		WebDriverUtil.waitForElementPresent(driver, By.className("layout_iframe"), 30);
 		WebDriverUtil.switchToIframe(driver, iframe);
 		WebDriverUtil.waitForElementPresent(driver, By.id("listBox"), 30);
+		
+		//获得一共多少页
+		int totalPages = getTotalPages(this.totalPages.getText());
+		
+		//如果总共页数小于要获取的
+		if(totalPages < pages)
+			pages = totalPages;
+		
+		for(int i=1;i<=pages;i++){
+			//
+			getOrderFromSinglePage();
+			
+			if(i != pages){
+				//获取第一个订单的ID来判断翻页是否完成
+				String firstOrderId = orderList.get(0).findElement(By.className("title-order")).getText();
+				nextPage.click();
+				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//span[text()='"+firstOrderId+"']"), 15);
+			}
+		}
+	}
+	
+	public void getOrderFromSinglePage(){
+
 
 		//获得有多少个订单，然后遍历
-		System.out.println(orderList.size());
 		for(WebElement order : orderList){
 			
 			String orderStatus = order.findElement(By.cssSelector(".s7")).getText();
 			
 			String orderid = order.findElement(By.className("title-order")).getText();
+			orderid = getStringByRegex(orderid,"\\d+");
 			LOG.info("订单号："+orderid);
 			
 			String orderdate = order.findElement(By.className("date")).getText();
+			orderdate = getStringByRegex(orderdate,dataRegex);
 			LOG.info("订单日期："+orderdate);
 			
 			String seller = order.findElement(By.cssSelector(".seller-name > a")).getText();
@@ -77,11 +103,16 @@ public class ItemListPage {
 				String itemquantity = good.findElement(By.className("s4")).getText();
 				LOG.info("商品数量："+itemquantity);
 				
-				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity);
-
+				String itemSku = "";
+				if(WebDriverUtil.verifyElementExistBasedOnElement(driver,good, By.className("trade-spec"))){
+					itemSku = good.findElement(By.className("trade-spec")).getText();
+					LOG.info("SKU信息: "+itemSku);
+				}
+				
+				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);
 			}
 			
-			if(verifyShipInfoExist(order, By.linkText("查看物流")) && orderStatus.equals("等待买家确认收货")){
+			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.linkText("查看物流")) && orderStatus.equals("等待买家确认收货")){
 				//点击物流详情查看物流信息
 				order.findElement(By.linkText("查看物流")).click();
 				String parentHanle = driver.getWindowHandle();
@@ -92,28 +123,6 @@ public class ItemListPage {
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 				WebDriverUtil.switchToIframe(driver, iframe);
 			}
-		}
-	}
-	
-	public static String getItemId(String url){
-		Pattern p=Pattern.compile("(?<=id=|id_num=)\\d+");
-	    Matcher m=p.matcher(url);
-	    String findString = "";
-	    if(m.find()){
-	    	findString = m.group(0);
-	    }
-		return findString;
-	}
-	
-	public boolean verifyShipInfoExist(WebElement order, By elementLocator){
-
-		if (order.findElements(elementLocator).size() > 0) {
-			LOG.info("element: " + elementLocator.toString()+" found");
-			return true;
-		}else
-		{
-			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
-			return false;
 		}
 	}
 }

@@ -40,7 +40,6 @@ public class alibaba {
 		account = accountDAO.getAccount("ali1688");
 		
 		loginPage.login(account.getAccount(), account.getPassword());
-		
 	}
 	
 	@Test(dependsOnMethods="aliLogin")
@@ -54,6 +53,6 @@ public class alibaba {
 		
 		ItemListPage itemPage = new ItemListPage(driver);
 		
-		itemPage.getItemInfo();
+		itemPage.getItemInfo(2);
 	}
 }
