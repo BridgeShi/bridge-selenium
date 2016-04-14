@@ -1,20 +1,20 @@
 package com.bridge.pages.taobao;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.pages.BasePage;
 import com.bridge.util.WebDriverUtil;
 
-public class ItemListPage {
+public class ItemListPage extends BasePage{
 	private static final Log LOG = LogFactory.getLog(ItemListPage.class);
 
 	private static String orderIdXpath = ".//span[contains(.,'订单号')]/following-sibling::span[2]";
@@ -31,7 +31,7 @@ public class ItemListPage {
 	
 	private static String goodsNumXpath = "./td[3]//div";
 	
-	private static String orderPriceXpath = ".//td[.//p/strong]";
+	private static String orderPriceXpath = ".//td[.//p/strong]//strong";
 	
 	private static String orderStatusXpath = ".//table[2]//tr[2]//td[6]/div/div[1]";
 	
@@ -39,70 +39,110 @@ public class ItemListPage {
 	
 	private static String shipLinkXpath = ".//a[@class='tp-tag-a'][contains(@href,'wuliu')]";
 	
-	protected WebDriver driver;
+	private static String skuXpath = ".//div[@style='margin-top:8px;margin-bottom:0;color:#9C9C9C;']";
 	
-	@FindBy(className="trade-order-mainClose")
+	@FindBy(css="div[class^=trade-order-main]")
 	List<WebElement> orderList;
-		
-	public ItemListPage(final WebDriver driver) {
-		this.driver = driver;
+	
+	@FindBy(css=".tp-common-btn[style*='rgb(255, 255, 255)']")
+	WebElement currentPage;
+	
+	@FindBy(xpath="//span[./span='页']/span[contains(.,'共')]")
+	WebElement totalPages;
+	
+	@FindBy(xpath="//span[text()='下一页']")
+	WebElement nextPage;
+	
+	//private TaobaoDAO tbDAO = new TaobaoDAO();
+	
+	public ItemListPage(WebDriver driver) {
+		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getItemInfo(){
-		WebDriverUtil.waitForElementPresent(driver, By.className("trade-order-mainClose"), 10);
+	public void getItemInfo(int pages){
+		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("div[class^=trade-order-main]"), 10);
+		//获得一共多少页
+		int totalPages = getTotalPages(this.totalPages.getText());
+		
+		//如果总共页数小于要获取的
+		if(totalPages < pages)
+			pages = totalPages;
+		
+		for(int i=1;i<=pages;i++){
+			//
+			getOrderFromSinglePage();
+			
+			if(i != pages){
+				//获取第一个订单的ID来判断翻页是否完成
+				String firstOrderId = orderList.get(0).findElement(By.xpath(orderIdXpath)).getText();
+				nextPage.click();
+				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//span[text()='"+firstOrderId+"']"), 15);
+			}
+		}
+	}
+	
+	public void getOrderFromSinglePage(){
 		//获得有多少个订单，然后遍历
 		for(WebElement order : orderList){
 			
 			String orderStatus = order.findElement(By.xpath(orderStatusXpath)).getText();
-			LOG.info("订单号："+order.findElement(By.xpath(orderIdXpath)).getText());
-			LOG.info("订单日期："+order.findElement(By.xpath(orderDateXpath)).getText());
-			LOG.info("商家名："+order.findElement(By.xpath(sellerXpath)).getText());
-			LOG.info("订单总价："+order.findElement(By.xpath(orderPriceXpath)).getText());
+
+			String orderid = order.findElement(By.xpath(orderIdXpath)).getText();
+			LOG.info("订单号："+orderid);
+			
+			String orderdate = order.findElement(By.xpath(orderDateXpath)).getText();
+			LOG.info("订单日期："+orderdate);
+			
+			String seller = order.findElement(By.xpath(sellerXpath)).getText();
+			LOG.info("商家名："+seller);
+			
+			String orderprice = order.findElement(By.xpath(orderPriceXpath)).getText();
+			LOG.info("订单总价："+orderprice);
+			
 			LOG.info("订单状态："+orderStatus);
 			
 			//获得订单中有多少个商品
 			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
 			for(WebElement good : goodsList){
-				LOG.info("商品名称："+good.findElement(By.xpath(goodsNameXpath)).getText());
-				LOG.info("商品ID："+getItemId(good.findElement(By.xpath(goodsIdXpath)).getAttribute("href")));
-				LOG.info("商品价格："+good.findElement(By.xpath(goodsPriceXpath)).getText());
-				LOG.info("商品数量："+good.findElement(By.xpath(goodsNumXpath)).getText());
+				
+				String itemname = good.findElement(By.xpath(goodsNameXpath)).getText();
+				LOG.info("商品名称："+itemname);
+				
+				String itemid = getItemId(good.findElement(By.xpath(goodsIdXpath)).getAttribute("href"));
+				LOG.info("商品ID："+itemid);
+				
+				String itemprice = good.findElement(By.xpath(goodsPriceXpath)).getText();
+				LOG.info("商品价格："+itemprice);
+				
+				String itemquantity = good.findElement(By.xpath(goodsNumXpath)).getText();
+				LOG.info("商品数量："+itemquantity);
+				
+				String itemSku = "";
+				if(WebDriverUtil.verifyElementExistBasedOnElement(driver,good, By.xpath(skuXpath))){
+					itemSku = good.findElement(By.xpath(skuXpath)).getText();
+					LOG.info("SKU信息: "+itemSku);
+				}
+				
+				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);
 			}
 			
-			
-			if(verifyShipInfoExist(order, By.xpath(shipLinkXpath)) && orderStatus.equals("交易成功")){
-				//点击物流详情查看物流信息
-				order.findElement(By.xpath(shipLinkXpath)).click();
+			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
+				WebElement shipLink = order.findElement(By.xpath(shipLinkXpath));
+				//shipLink.click();
+				//获取链接地址打开新窗口查看
+				String href = shipLink.getAttribute("href");
+				JavascriptExecutor executor = (JavascriptExecutor) driver;
+				executor.executeScript("window.open('" + href + "')");
+				
 				String parentHanle = driver.getWindowHandle();
 				WebDriverUtil.switchWindows(driver);
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
-				shipPage.getShipInfo();
+				shipPage.getShipInfo(orderid);
 				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 			}
 		}
 	}
 	
-	public static String getItemId(String url){
-		Pattern p=Pattern.compile("(?<=id=|id_num=)\\d+");
-	    Matcher m=p.matcher(url);
-	    String findString = "";
-	    if(m.find()){
-	    	findString = m.group(0);
-	    }
-		return findString;
-	}
-	
-	public boolean verifyShipInfoExist(WebElement order, By elementLocator){
-
-		if (order.findElements(elementLocator).size() > 0) {
-			LOG.info("element: " + elementLocator.toString()+" found");
-			return true;
-		}else
-		{
-			LOG.info("element: " + elementLocator.toString() +" was not found on current page");
-			return false;
-		}
-	}
 }

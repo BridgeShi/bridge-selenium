@@ -1,4 +1,4 @@
-package com.bridge.pages.taobao;
+package com.bridge.pages.alibaba;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,10 +24,13 @@ public class LoginPage extends BasePage{
 	@FindBy(id="J_SubmitStatic")
 	WebElement submitBtn;
 	
+	@FindBy(css="#loginchina iframe")
+	WebElement loginFrame;
+	
 	@FindBy(id="_n1z")
 	WebElement captchaArrow;
 	
-	private String url = "https://login.taobao.com";
+	private String url = "https://login.1688.com/member/signin.htm";
 	
 	public LoginPage(WebDriver driver) {
 		super(driver);
@@ -39,9 +42,12 @@ public class LoginPage extends BasePage{
 	}
 	
 	public void login(String userName,String passWord){
+		WebDriverUtil.waitForElementPresent(driver, By.id("loginchina"), 30);
+		WebDriverUtil.switchToIframe(driver, loginFrame);
 		LOG.debug("Entering username and password");
 		this.userName.sendKeys(userName);
 		this.passWord.sendKeys(passWord);
+		//captcha();
 		LOG.debug("Submit login");
 		submitBtn.click();
 	}
