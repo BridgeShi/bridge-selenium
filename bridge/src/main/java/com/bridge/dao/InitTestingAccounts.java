@@ -36,8 +36,8 @@ public class InitTestingAccounts {
 		    
 			query = " insert into TB_1688_Accounts (account, password, type) " + "values (?, ?, ?)";
 		    
-			String account = "策融1";
-			String password = "SH61504007";
+			String account = "";
+			String password = "";
 			String type = "taobao";
 			
 			PreparedStatement preparedStmt = conn.prepareStatement(query);

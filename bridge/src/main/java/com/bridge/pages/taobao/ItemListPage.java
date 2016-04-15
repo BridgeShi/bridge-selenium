@@ -41,6 +41,10 @@ public class ItemListPage extends BasePage{
 	
 	private static String skuXpath = ".//div[@style='margin-top:8px;margin-bottom:0;color:#9C9C9C;']";
 	
+	private static String goodsUrlXpath = ".//a[contains(@href,'item.htm?id')] | .//a[contains(@href,'item_id_num')]";
+	
+	private static String goodsImgXpath = "./td/div/a/img";
+	
 	@FindBy(css="div[class^=trade-order-main]")
 	List<WebElement> orderList;
 	
@@ -53,7 +57,12 @@ public class ItemListPage extends BasePage{
 	@FindBy(xpath="//span[text()='下一页']")
 	WebElement nextPage;
 	
+	@FindBy(className="login-info-nick")
+	WebElement userNameElement;
+	
 	//private TaobaoDAO tbDAO = new TaobaoDAO();
+	
+	private String userName;
 	
 	public ItemListPage(WebDriver driver) {
 		super(driver);
@@ -61,6 +70,11 @@ public class ItemListPage extends BasePage{
 	}
 	
 	public void getItemInfo(int pages){
+		
+		WebDriverUtil.waitForElementPresent(driver, By.id("J_LoginInfo"), 15);
+		
+		userName = userNameElement.getText();
+		
 		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("div[class^=trade-order-main]"), 10);
 		//获得一共多少页
 		int totalPages = getTotalPages(this.totalPages.getText());
@@ -124,7 +138,15 @@ public class ItemListPage extends BasePage{
 					LOG.info("SKU信息: "+itemSku);
 				}
 				
-				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);
+				String itemUrl = good.findElement(By.xpath(goodsUrlXpath)).getAttribute("href");
+				LOG.info("商品链接："+itemUrl);
+				
+				String itemImgUrl = good.findElement(By.xpath(goodsImgXpath)).getAttribute("src");
+				LOG.info("图片链接："+itemImgUrl);
+				
+				tbDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, 
+						itemname, itemid, itemprice, itemquantity,itemSku
+						,itemUrl,itemImgUrl,userName);
 			}
 			
 			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.xpath(shipLinkXpath)) && orderStatus.contains("物流")){
