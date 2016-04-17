@@ -11,12 +11,12 @@ public class Ali1688DAO {
 	private PreparedStatement preparedStmt = null;
 
 	private String insertquery = " insert into Ali1688_ORDER_HISTORY (orderid, orderdate, seller, totalprice, orderstatus, "
-			+ "itemname, itemid, itemprice, itemqty, itemsku) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "itemname, itemid, itemprice, itemqty, sku, itemurl, imgurl, username) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
 	
 	private String updatequery = "update Ali1688_ORDER_HISTORY set shipno = ?, shipper = ?, shipstatus = ? where orderid = ?";
 
 	public void insert(String orderid, String orderdate, String seller, String totalprice, String orderstatus,
-			String itemname, String itemid, String itemprice, String itemqty,String itemSku) {
+			String itemname, String itemid, String itemprice, String itemqty,String itemSku,String itemurl,String imgurl,String username) {
 
 		try {
 			conn = DBManager.getConnection();
@@ -36,7 +36,9 @@ public class Ali1688DAO {
 			preparedStmt.setString (8, itemprice);
 			preparedStmt.setString (9, itemqty);
 			preparedStmt.setString (10, itemSku);
-
+			preparedStmt.setString (11, itemurl);
+			preparedStmt.setString (12, imgurl);
+			preparedStmt.setString (13, username);
 			
 			preparedStmt.execute();
 			conn.close();

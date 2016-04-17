@@ -31,8 +31,13 @@ public class ItemListPage extends BasePage{
 	@FindBy(xpath="//a[text()='下一页']")
 	WebElement nextPage;
 	
+	@FindBy(className="account-id")
+	WebElement userNameElement;
+	
 	private String dataRegex = "(\\d{4})-(0\\d{1}|1[0-2])-(0\\d{1}|[12]\\d{1}|3[01]) "
 			+ "(0\\d{1}|1\\d{1}|2[0-3]):([0-5]\\d{1}):([0-5]\\d{1})";
+	
+	private String userName;
 	
 	public ItemListPage(WebDriver driver) {
 		super(driver);
@@ -41,6 +46,8 @@ public class ItemListPage extends BasePage{
 	
 	public void getItemInfo(int pages){
 		WebDriverUtil.waitForElementPresent(driver, By.className("layout_iframe"), 30);
+		userName = userNameElement.getText();
+		LOG.info("user name is: "+userName);
 		WebDriverUtil.switchToIframe(driver, iframe);
 		WebDriverUtil.waitForElementPresent(driver, By.id("listBox"), 30);
 		
@@ -49,6 +56,7 @@ public class ItemListPage extends BasePage{
 		
 		//如果总共页数小于要获取的
 		if(totalPages < pages)
+			
 			pages = totalPages;
 		
 		for(int i=1;i<=pages;i++){
@@ -80,7 +88,7 @@ public class ItemListPage extends BasePage{
 			orderdate = getStringByRegex(orderdate,dataRegex);
 			LOG.info("订单日期："+orderdate);
 			
-			String seller = order.findElement(By.cssSelector(".seller-name > a")).getText();
+			String seller = order.findElement(By.cssSelector(".seller-name > a")).getAttribute("data-copytitle");
 			LOG.info("商家名："+seller);
 			
 			String orderprice = order.findElement(By.cssSelector(".s6 .total")).getText();
@@ -93,8 +101,11 @@ public class ItemListPage extends BasePage{
 			for(WebElement good : goodsList){
 				String itemname = good.findElement(By.className("productName")).getText();
 				LOG.info("商品名称："+itemname);
+								
+				String itemUrl = getGoodsUrl(good);
+				LOG.info("商品链接："+itemUrl);
 				
-				String itemid = getItemId(good.findElement(By.className("productName")).getAttribute("href"));
+				String itemid = getStringByRegex(itemUrl,"(?<=offer\\/)\\d+");
 				LOG.info("商品ID："+itemid);
 				
 				String itemprice = good.findElement(By.cssSelector("td.s3 strong")).getText();
@@ -109,7 +120,12 @@ public class ItemListPage extends BasePage{
 					LOG.info("SKU信息: "+itemSku);
 				}
 				
-				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, itemname, itemid, itemprice, itemquantity,itemSku);
+				String itemImgUrl = good.findElement(By.cssSelector(".s1 img")).getAttribute("src");
+				LOG.info("图片链接："+itemImgUrl);
+				
+				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, 
+						itemname, itemid, itemprice, itemquantity,itemSku
+						,itemUrl,itemImgUrl,userName);
 			}
 			
 			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.linkText("查看物流")) && orderStatus.equals("等待买家确认收货")){
@@ -124,5 +140,18 @@ public class ItemListPage extends BasePage{
 				WebDriverUtil.switchToIframe(driver, iframe);
 			}
 		}
+	}
+	
+	//获得URL
+	public String getGoodsUrl(WebElement goods){
+		goods.findElement(By.className("productName")).click();
+		String parentHanle = driver.getWindowHandle();
+		WebDriverUtil.switchWindows(driver);
+		TradeSnapShotPage sanpShotPage = new TradeSnapShotPage(driver);
+		String url = sanpShotPage.getGoodsLink();
+		driver.close();
+		WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
+		WebDriverUtil.switchToIframe(driver, iframe);
+		return url;
 	}
 }
