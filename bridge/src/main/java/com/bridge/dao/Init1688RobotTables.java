@@ -13,7 +13,8 @@ public class Init1688RobotTables {
 			+ "orderid VARCHAR(100), orderdate VARCHAR(100), seller VARCHAR(100), "
 			+ "totalprice VARCHAR(100), orderstatus VARCHAR(100), "
 			+ "itemname VARCHAR(100), itemid VARCHAR(100), itemprice VARCHAR(100), itemqty VARCHAR(100), "
-			+ "shipno VARCHAR(100), shipper VARCHAR(100), shipstatus VARCHAR(500) ) "
+			+ "shipno VARCHAR(100), shipper VARCHAR(100), shipstatus VARCHAR(500), "
+			+ "itemurl VARCHAR(500), imgurl VARCHAR(500), username VARCHAR(100) ) "
 			+ "DEFAULT CHARSET=utf8";
 
 	public static Connection getConnection() throws Exception {
