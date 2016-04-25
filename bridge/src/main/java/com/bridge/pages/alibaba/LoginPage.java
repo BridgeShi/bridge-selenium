@@ -45,6 +45,7 @@ public class LoginPage extends BasePage{
 		WebDriverUtil.waitForElementPresent(driver, By.id("loginchina"), 30);
 		WebDriverUtil.switchToIframe(driver, loginFrame);
 		LOG.debug("Entering username and password");
+		this.userName.clear();
 		this.userName.sendKeys(userName);
 		this.passWord.sendKeys(passWord);
 		//captcha();

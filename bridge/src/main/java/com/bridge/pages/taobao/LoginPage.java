@@ -40,6 +40,8 @@ public class LoginPage extends BasePage{
 	
 	public void login(String userName,String passWord){
 		LOG.debug("Entering username and password");
+		this.userName.clear();
+
 		this.userName.sendKeys(userName);
 		this.passWord.sendKeys(passWord);
 		LOG.debug("Submit login");
