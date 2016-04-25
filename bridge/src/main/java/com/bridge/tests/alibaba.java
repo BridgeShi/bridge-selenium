@@ -2,9 +2,6 @@ package com.bridge.tests;
 
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.annotations.BeforeTest;
 //import org.testng.annotations.Test;
 
 import com.bridge.pages.alibaba.LoginPage;
@@ -13,20 +10,13 @@ import com.bridge.dao.AccountDAO;
 import com.bridge.pages.alibaba.ItemListPage;
 import com.bridge.util.WebDriverUtil;
 
-public class alibaba {
-
-	private static WebDriver driver;
+public class alibaba extends BaseTest{
 	
 	private static Account account = null;
 	private static AccountDAO accountDAO = null;
 	
-	@BeforeTest
-	public void getWebDriver(){
-		alibaba.driver = new FirefoxDriver();
-	}
-	
 	public static void main(String args[]){
-		driver = new FirefoxDriver();
+		getWebDriver();
 		
 		aliLogin();
 		
@@ -34,9 +24,8 @@ public class alibaba {
 		getInfo(2);
 		
 		//关闭webdriver
-		driver.close();
-		
-		driver.quit();
+		closeWebDriver();
+
 	}
 	
 	//@Test
