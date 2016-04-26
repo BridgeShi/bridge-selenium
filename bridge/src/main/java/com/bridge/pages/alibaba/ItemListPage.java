@@ -96,6 +96,13 @@ public class ItemListPage extends BasePage{
 			
 			LOG.info("订单状态："+orderStatus);
 			
+			//展开更多
+			if(WebDriverUtil.verifyElementExistBasedOnElement(driver, order, By.cssSelector(".isShowMore"))){
+				LOG.info("show more");
+				order.findElement(By.xpath("//div[@class='isShowMore']/a[contains(.,'展开')]")).click();
+				WebDriverUtil.waitForElementVisible(driver, order.findElement(By.xpath("//div[@class='isShowMore']/a[@class='folderclose']")), 5);
+			}
+			
 			//获得订单中有多少个商品
 			List<WebElement> goodsList = order.findElements(By.xpath(goodsRowXpath));
 			for(WebElement good : goodsList){
@@ -120,7 +127,7 @@ public class ItemListPage extends BasePage{
 					LOG.info("SKU信息: "+itemSku);
 				}
 				
-				String itemImgUrl = good.findElement(By.cssSelector(".s1 img")).getAttribute("src");
+				String itemImgUrl = good.findElement(By.cssSelector(".s1 img")).getAttribute("src").replace(".summ2", "");
 				LOG.info("图片链接："+itemImgUrl);
 				
 				aliDAO.insert(orderid, orderdate, seller, orderprice, orderStatus, 
