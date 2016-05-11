@@ -19,42 +19,44 @@ public class ItemListPage extends BasePage{
 
 	private static String orderIdXpath = ".//span[contains(.,'订单号')]/following-sibling::span[2]";
 	
-	private static String orderDateXpath = ".//strong[@title]";
+	//private static String orderDateXpath = ".//strong[@title]";
 	
-	private static String sellerXpath = ".//a[@class='tp-tag-a'][@title][contains(@href,'user_number_id')]";
+	private static String orderDateCss = "span[class^='bought-wrapper-mod__create-time']";
+
+	private static String sellerXpath = ".//a[starts-with(@class,'seller-mod__name')][@title][contains(@href,'user_number_id')]";
 	
 	private static String goodsNameXpath = ".//a[contains(@href,'item.htm?id')]/span | .//a[contains(@href,'item_id_num')]/span";
 	
 	private static String goodsIdXpath = ".//a[contains(@href,'item.htm?id')] | .//a[contains(@href,'item_id_num')]";
 	
-	private static String goodsPriceXpath = "./td[2]/div[@style='font-family:verdana;font-style:normal;']/p[not(./del)]";
+	private static String goodsPriceXpath = "./td[2]/div[starts-with(@class,'price-mod__price')]/p[not(./del)]";
 	
 	private static String goodsNumXpath = "./td[3]//div";
 	
 	private static String orderPriceXpath = ".//td[.//p/strong]//strong";
 	
-	private static String orderStatusXpath = ".//table[2]//tr[2]//td[6]/div/div[1]";
+	private static String orderStatusXpath = ".//table/tbody[2]/tr/td[6]/div/p";
 	
-	private static String goodsRowXpath = ".//table[2]//tr[.//img]";
+	private static String goodsRowXpath = ".//tbody[2]//tr[.//img]";
 	
-	private static String shipLinkXpath = ".//a[@class='tp-tag-a'][contains(@href,'wuliu')]";
+	private static String shipLinkXpath = ".//a[@id='viewLogistic'][contains(@href,'wuliu')]";
 	
-	private static String skuXpath = ".//div[@style='margin-top:8px;margin-bottom:0;color:#9C9C9C;']";
+	private static String skuXpath = ".//p[./span[starts-with(@class,'production')]]";
 	
 	private static String goodsUrlXpath = ".//a[contains(@href,'item.htm?id')] | .//a[contains(@href,'item_id_num')]";
 	
-	private static String goodsImgXpath = "./td/div/a/img";
+	private static String goodsImgXpath = "./td//a[starts-with(@class,'production-mod__pic')]/img";
 	
-	@FindBy(css="div[class^=trade-order-main]")
+	@FindBy(css="div[class^=index-mod__order-container]")
 	List<WebElement> orderList;
 	
-	@FindBy(css=".tp-common-btn[style*='rgb(255, 255, 255)']")
+	@FindBy(css=".pagination-item.pagination-item-active")
 	WebElement currentPage;
 	
-	@FindBy(xpath="//span[./span='页']/span[contains(.,'共')]")
+	@FindBy(xpath="//ul[@class='pagination ']/li[contains(@title,'最后一页')]")
 	WebElement totalPages;
 	
-	@FindBy(xpath="//span[text()='下一页']")
+	@FindBy(xpath="//button[text()='下一页']")
 	WebElement nextPage;
 	
 	@FindBy(className="login-info-nick")
@@ -75,8 +77,9 @@ public class ItemListPage extends BasePage{
 		
 		userName = userNameElement.getText();
 		
-		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("div[class^=trade-order-main]"), 10);
+		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("div[class^=index-mod__order-container]"), 10);
 		//获得一共多少页
+				
 		int totalPages = getTotalPages(this.totalPages.getText());
 		
 		//如果总共页数小于要获取的
@@ -105,7 +108,7 @@ public class ItemListPage extends BasePage{
 			String orderid = order.findElement(By.xpath(orderIdXpath)).getText();
 			LOG.info("订单号："+orderid);
 			
-			String orderdate = order.findElement(By.xpath(orderDateXpath)).getText();
+			String orderdate = order.findElement(By.cssSelector(orderDateCss)).getText();
 			LOG.info("订单日期："+orderdate);
 			
 			String seller = order.findElement(By.xpath(sellerXpath)).getText();
@@ -154,14 +157,20 @@ public class ItemListPage extends BasePage{
 				//shipLink.click();
 				//获取链接地址打开新窗口查看
 				String href = shipLink.getAttribute("href");
-				JavascriptExecutor executor = (JavascriptExecutor) driver;
-				executor.executeScript("window.open('" + href + "')");
-				
 				String parentHanle = driver.getWindowHandle();
-				WebDriverUtil.switchWindows(driver);
+
+				if(driver.getWindowHandles().size() >= 2){
+					WebDriverUtil.switchWindows(driver);
+					driver.get(href);
+
+				}else{
+					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					executor.executeScript("window.open('" + href + "')");
+					WebDriverUtil.switchWindows(driver);
+				}
+
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
 				shipPage.getShipInfo(orderid);
-				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 			}
 		}

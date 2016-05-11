@@ -137,12 +137,18 @@ public class ItemListPage extends BasePage{
 			
 			if(WebDriverUtil.verifyElementExistBasedOnElement(driver,order, By.linkText("查看物流")) && orderStatus.equals("等待买家确认收货")){
 				//点击物流详情查看物流信息
-				order.findElement(By.linkText("查看物流")).click();
+				
 				String parentHanle = driver.getWindowHandle();
-				WebDriverUtil.switchWindows(driver);
+				if(driver.getWindowHandles().size() >= 2){
+					String href = order.findElement(By.linkText("查看物流")).getAttribute("href");
+					WebDriverUtil.switchWindows(driver);
+					driver.get(href);
+				}else{
+					order.findElement(By.linkText("查看物流")).click();
+					WebDriverUtil.switchWindows(driver);
+				}
 				ShipStatusPage shipPage = new ShipStatusPage(driver);
 				shipPage.getShipInfo(orderid);
-				driver.close();
 				WebDriverUtil.switchBackToParentWindow(driver, parentHanle);
 				WebDriverUtil.switchToIframe(driver, iframe);
 			}

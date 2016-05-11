@@ -11,7 +11,7 @@ public class Ali1688DAO {
 	private PreparedStatement preparedStmt = null;
 
 	private String insertquery = " insert into Ali1688_ORDER_HISTORY (orderid, orderdate, seller, totalprice, orderstatus, "
-			+ "itemname, itemid, itemprice, itemqty, sku, itemurl, imgurl, username) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
+			+ "itemname, itemid, itemprice, itemqty, itemsku, itemurl, imgurl, username) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
 	
 	private String updatequery = "update Ali1688_ORDER_HISTORY set shipno = ?, shipper = ?, shipstatus = ? where orderid = ?";
 
