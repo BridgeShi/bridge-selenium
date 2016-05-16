@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.Ali1688CategoryDAO;
 import com.bridge.dao.Ali1688DAO;
 import com.bridge.dao.AmazonDAO;
 import com.bridge.dao.TaobaoDAO;
@@ -21,6 +22,8 @@ public class BasePage {
 	
 	protected Ali1688DAO aliDAO = new Ali1688DAO();
 
+	protected Ali1688CategoryDAO aliCategoryDAO = new Ali1688CategoryDAO();
+	
 	protected AmazonDAO amazonDAO = new AmazonDAO();
 	
 	public BasePage(final WebDriver driver) {
