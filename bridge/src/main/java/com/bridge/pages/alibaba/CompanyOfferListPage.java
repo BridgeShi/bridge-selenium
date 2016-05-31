@@ -19,7 +19,7 @@ public class CompanyOfferListPage extends BasePage{
 	
 	private static String companyUrl;
 	
-	@FindBy(css="em.offer-count")
+	@FindBy(css="em.page-count")
 	WebElement totalPages;
 	
 	@FindBy(css=".offer-list-row>li")
@@ -46,18 +46,17 @@ public class CompanyOfferListPage extends BasePage{
 		
 		if(totalPages < pages)
 			pages = totalPages;
-		
+				
 		for(int i=1;i<=pages;i++)
 		{
 			getProductInfoFromSignlePage();
-			
+						
 			if(i != pages){
 				//获取第一个订单的ID来判断翻页是否完成
-				String firstOfferName = offerList.get(0).findElement(By.cssSelector(".title > a")).getText();
-								
 				nextPage.click();
 				
-				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//a[text()='"+firstOfferName+"']"), 15);
+				WebDriverUtil.waitForElementPresent(driver, By.xpath("//a[@class='current'][text()='"+(i+1)+"']"), 15);
+				
 			}
 		}
 	}

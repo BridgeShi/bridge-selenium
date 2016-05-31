@@ -79,6 +79,10 @@ public class ProductListPage extends CategoryPage{
 			LOG.info("价格："+price);
 			
 			String productUrl = offer.findElement(By.cssSelector(".s-widget-offershopwindowtitle > a")).getAttribute("href");
+			if(!productUrl.contains("detail.1688.com")){
+				String offerId = offer.findElement(By.cssSelector("a.sm-offer-companyName")).getAttribute("offerid");
+				productUrl = "https://detail.1688.com/offer/"+offerId+".html";
+			}
 			LOG.info("产品链接："+productUrl);
 			
 			String companyName = offer.findElement(By.cssSelector("a.sm-offer-companyName")).getText();
