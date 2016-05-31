@@ -186,4 +186,11 @@ public class WebDriverUtil {
 			return false;
 		}
 	}
+	
+	public static void scrollPage(WebDriver driver,String x,String y){
+		JavascriptExecutor jse = (JavascriptExecutor)driver;
+		jse.executeScript("window.scrollBy("+x+","+y+")");
+		LOG.info("scroll down...");
+		
+	}
 }
