@@ -52,6 +52,8 @@ public class ProductListPage extends CategoryPage{
 				
 				WebDriverUtil.scrollPage(driver, "0", "-20000");
 				
+				WebDriverUtil.waitForElementNotVisible(driver, By.cssSelector(".sm-widget-bar.sm-widget-fixed"), 30);
+				
 				nextPage.click();
 				
 				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//a[text()='"+firstOfferName+"']"), 15);
