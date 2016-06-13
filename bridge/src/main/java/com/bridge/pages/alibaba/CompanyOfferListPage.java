@@ -37,8 +37,13 @@ public class CompanyOfferListPage extends BasePage{
 	}
 	
 	public void getProductInfo(int pages){
-		int totalPages = getTotalPages(this.totalPages.getText());
-
+		int totalPages = 1;
+		try{
+			totalPages = getTotalPages(this.totalPages.getText());
+		}catch(NoSuchElementException NE){
+			LOG.info("page count not found");
+		}
+		
 		companyUrl = getStringByRegex(driver.getCurrentUrl(),"^(https?:\\/\\/)([\\da-z\\.-]+)\\/");
 		LOG.info("工厂链接："+companyUrl);
 		

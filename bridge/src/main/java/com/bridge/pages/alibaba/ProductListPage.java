@@ -54,6 +54,8 @@ public class ProductListPage extends CategoryPage{
 				
 				WebDriverUtil.waitForElementNotVisible(driver, By.cssSelector(".sm-widget-bar.sm-widget-fixed"), 30);
 				
+				LOG.info("page down");
+				
 				nextPage.click();
 				
 				WebDriverUtil.waitForElementNotVisible(driver, By.xpath("//a[text()='"+firstOfferName+"']"), 15);
