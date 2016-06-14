@@ -12,7 +12,7 @@ public class BaseTest {
 
 	protected static WebDriver driver;
 	
-	private static final Log LOG = LogFactory.getLog(BaseTest.class);
+	protected static final Log LOG = LogFactory.getLog(BaseTest.class);
 
 	@BeforeTest
 	public static void getWebDriver(){

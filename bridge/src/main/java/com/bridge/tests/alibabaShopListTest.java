@@ -13,8 +13,6 @@ import com.bridge.pages.alibaba.CompanyOfferListPage;
 
 public class alibabaShopListTest extends BaseTest{
 	
-	private static final Log LOG = LogFactory.getLog(BaseTest.class);
-
 	public static void main(String args[]){
 		getWebDriver();
 		
