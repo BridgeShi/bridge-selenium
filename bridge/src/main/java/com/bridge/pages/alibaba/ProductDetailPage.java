@@ -14,10 +14,10 @@ import org.openqa.selenium.support.PageFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bridge.pages.BasePage;
 import com.bridge.util.WebDriverUtil;
 
-
-public class ProductDetailPage extends CategoryPage{
+public class ProductDetailPage extends BasePage{
 	
 	@FindBy(css=".fui-paging-total")
 	WebElement totalPages;
@@ -72,15 +72,17 @@ public class ProductDetailPage extends CategoryPage{
 		String productName = productTitle.getText();
 		LOG.info("产品名称："+productName);
 		
+    	JSONArray price = new JSONArray();
 		for(WebElement ladder : priceLadderList){
 			String priceLadder = ladder.getAttribute("data-range");
-			LOG.info("价格区间："+priceLadder);
+			price.add(JSON.parseObject(priceLadder));
 		}
-		
+		LOG.info("价格区间："+price.toString());
+
 		String bargains = bargainCount.getText();
 		LOG.info("成交数量："+bargains);
 		
-		getAllSku();
+		JSONObject skuInfo = getAllSku();
 		
 		iconArrow.click();
 		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("span.parcel-unit-weight"), 10);
@@ -93,24 +95,31 @@ public class ProductDetailPage extends CategoryPage{
     	JSONArray imgArray = new JSONArray();
 		for(WebElement img : imgTab){
 			String imgData = img.getAttribute("data-imgs");
-			LOG.info("图片链接："+imgData);
+			//LOG.info("图片链接："+imgData);
 			imgArray.add(JSON.parseObject(imgData));
 		}
 		
-		LOG.info(imgArray);
+		LOG.info("图片链接："+imgArray);
 		srcollDown();
 		String description = this.description.getText();
 		LOG.info("描述信息："+description);
 		
+    	JSONArray descripImgArray = new JSONArray();
 		for(WebElement img : descriptionImgs){
 			String imgData = img.getAttribute("data-lazyload-src");
 			if(imgData == null){
 				imgData = img.getAttribute("src");
+			}else{
+				imgData = imgData.replace("//", "https://");
 			}
-			LOG.info("描述内图片链接："+imgData);
+	    	JSONObject mainObject = new JSONObject();
+	    	mainObject.put("imgUrl", imgData);
+			descripImgArray.add(mainObject);
+			//LOG.info("描述内图片链接："+imgData);
 		}
+		LOG.info("描述内图片链接："+descripImgArray);		
 		
-		
+		aliProductDAO.insert(productName, driver.getCurrentUrl(), price.toString(), weight, bargains, description, imgArray.toString(), descripImgArray.toString(), skuInfo.toString(), attributes);
 	}
 	
 	public JSONObject getAllSku(){
@@ -127,7 +136,7 @@ public class ProductDetailPage extends CategoryPage{
 		    		skuObject.put(skuTd.getAttribute("class"), skuTd.getText());
 	    		}
 		    	array.add(skuObject);
-		    	LOG.debug(array);
+		    	//LOG.debug(array);
 	    	}
 	    	
 	    	allSku.put(sku.getAttribute("title"), array);
