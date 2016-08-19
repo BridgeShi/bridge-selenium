@@ -58,9 +58,14 @@ public class ProductDetailPage extends BasePage{
 	//@FindBy(css="table.table-sku td:not(:last-of-type)")
 	//List<WebElement> skuTable;
 	
+	@FindBy(css=".amount-input")
+	WebElement amountInput;
+	
+	@FindBy(css="a.do-cart.ms-yh")
+	WebElement addToCartBtn;
+	
 	private static final Log LOG = LogFactory.getLog(ProductDetailPage.class);
 	
-
 	public ProductDetailPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(driver, this);
@@ -154,4 +159,29 @@ public class ProductDetailPage extends BasePage{
 
 	}
 
+	public void addToCart(String skuName,String amount){
+		WebDriverUtil.waitForElementPresent(driver, By.id("mod-detail"), 10);
+
+		driver.findElement(By.cssSelector("ul.list-leading li > div > a img[alt='"+skuName+"']")).click();
+		
+		inputAmount(amount);
+		
+		LOG.info("add to cart");
+
+		addToCartBtn.click();
+		
+		try{
+			WebDriverUtil.waitForElementPresent(driver, By.xpath("//div[@class='cart-wrap']/h4[contains(.,'成功添加到')]"), 10);
+		}catch(TimeoutException TE){
+			LOG.info("添加购物车失败，URL："+driver.getCurrentUrl());
+		}
+	}
+
+	public void inputAmount(String amount){
+		LOG.info("input "+amount+" into amount");
+		amountInput.clear();
+		amountInput.sendKeys(amount);
+	}
+	
+	
 }

@@ -51,6 +51,8 @@ public class LoginPage extends BasePage{
 		//captcha();
 		LOG.debug("Submit login");
 		submitBtn.click();
+		
+		WebDriverUtil.waitForElementPresent(driver, By.cssSelector("a[title='"+userName+"']"), 15);
 	}
 	
 	public void captcha(){
