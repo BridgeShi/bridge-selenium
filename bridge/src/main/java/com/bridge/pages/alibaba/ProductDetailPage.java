@@ -31,7 +31,7 @@ public class ProductDetailPage extends BasePage{
 	@FindBy(css="span.parcel-unit-weight")
 	WebElement weight;
 	
-	@FindBy(css="i.icon-arrow")
+	@FindBy(css="div.obj-sku i.icon-arrow")
 	WebElement iconArrow;
 	
 	@FindBy(css="p.bargain-number > a")
@@ -57,9 +57,7 @@ public class ProductDetailPage extends BasePage{
 	
 	//@FindBy(css="table.table-sku td:not(:last-of-type)")
 	//List<WebElement> skuTable;
-	
-	@FindBy(css=".amount-input")
-	WebElement amountInput;
+
 	
 	@FindBy(css="a.do-cart.ms-yh")
 	WebElement addToCartBtn;
@@ -159,13 +157,21 @@ public class ProductDetailPage extends BasePage{
 
 	}
 
-	public void addToCart(String skuName,String amount){
+	public void addToCart(String firstOption,String secondOption,String amount){
 		WebDriverUtil.waitForElementPresent(driver, By.id("mod-detail"), 10);
 
-		driver.findElement(By.cssSelector("ul.list-leading li > div > a img[alt='"+skuName+"']")).click();
+		if(WebDriverUtil.verifyElementExist(driver, By.cssSelector("div.obj-sku .obj-expand[style='display: block;']"))){
+			iconArrow.click();
+		}
 		
-		inputAmount(amount);
-		
+		if(WebDriverUtil.verifyElementExist(driver, By.cssSelector("ul.list-leading li > div > a"))){
+			driver.findElement(By.cssSelector("ul.list-leading li > div > a img[alt='"+firstOption+"']")).click();
+			inputAmount(amount,secondOption);
+		}
+		else{
+			inputAmount(amount,firstOption);
+		}
+	
 		LOG.info("add to cart");
 
 		addToCartBtn.click();
@@ -177,8 +183,16 @@ public class ProductDetailPage extends BasePage{
 		}
 	}
 
-	public void inputAmount(String amount){
+	public void inputAmount(String amount,String option){
 		LOG.info("input "+amount+" into amount");
+		WebElement amountInput;
+
+		if(option.trim().equals("") || option.equals(null)){
+			amountInput = driver.findElement(By.cssSelector(".amount-input"));
+		}else
+		{
+			amountInput = driver.findElement(By.xpath("//tr[@class='last-row'][./td/span='"+option+"']//input"));
+		}
 		amountInput.clear();
 		amountInput.sendKeys(amount);
 	}
