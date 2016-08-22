@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
+import com.bridge.dao.Ali1688AddToCartDAO;
 import com.bridge.dao.Ali1688CategoryDAO;
 import com.bridge.dao.Ali1688DAO;
 import com.bridge.dao.Ali1688OfferDAO;
@@ -35,6 +36,9 @@ public class BasePage {
 
 	protected Ali1688ProductDAO aliProductDAO = new Ali1688ProductDAO();
 
+	protected Ali1688AddToCartDAO addToCartDAO = new Ali1688AddToCartDAO();
+
+	
 	public BasePage(final WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);

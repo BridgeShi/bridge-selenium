@@ -157,7 +157,7 @@ public class ProductDetailPage extends BasePage{
 
 	}
 
-	public void addToCart(String firstOption,String secondOption,String amount){
+	public void addToCart(String firstOption,String secondOption,String amount) throws Exception{
 		WebDriverUtil.waitForElementPresent(driver, By.id("mod-detail"), 10);
 
 		if(WebDriverUtil.verifyElementExist(driver, By.cssSelector("div.obj-sku .obj-expand[style='display: block;']"))){
@@ -176,10 +176,14 @@ public class ProductDetailPage extends BasePage{
 
 		addToCartBtn.click();
 		
+		boolean addToCart = true;
 		try{
 			WebDriverUtil.waitForElementPresent(driver, By.xpath("//div[@class='cart-wrap']/h4[contains(.,'成功添加到')]"), 10);
 		}catch(TimeoutException TE){
 			LOG.info("添加购物车失败，URL："+driver.getCurrentUrl());
+			addToCart = false;
+		}finally{
+			addToCartDAO.updateAddToCart(driver.getCurrentUrl(), addToCart);
 		}
 	}
 
@@ -187,7 +191,7 @@ public class ProductDetailPage extends BasePage{
 		LOG.info("input "+amount+" into amount");
 		WebElement amountInput;
 
-		if(option.trim().equals("") || option.equals(null)){
+		if(option == null || option.trim().equals("")){
 			amountInput = driver.findElement(By.cssSelector(".amount-input"));
 		}else
 		{
