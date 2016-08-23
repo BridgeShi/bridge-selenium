@@ -4,6 +4,8 @@ package com.bridge.tests;
 import org.openqa.selenium.By;
 //import org.testng.annotations.Test;
 
+import com.bridge.dao.OrderListDAO;
+import com.bridge.dao.PreOrderList;
 import com.bridge.pages.alibaba.ProductDetailPage;
 
 public class alibabaAddToCartTest extends alibaba{
@@ -14,7 +16,10 @@ public class alibabaAddToCartTest extends alibaba{
 		
 		aliLogin();
 		
-		addToCart("https://detail.1688.com/offer/530768935244.html?spm=a26e3.8027625.1999173159.1.2rTUAq#","蓝色","","1");
+		OrderListDAO rldao = new OrderListDAO();
+		PreOrderList pol = rldao.getPreOrderList();
+		
+		addToCart(pol.getUrl(),pol.getFirstOption(),pol.getSecondOption(),pol.getQty());
 		
 		//关闭webdriver
 		closeWebDriver();
