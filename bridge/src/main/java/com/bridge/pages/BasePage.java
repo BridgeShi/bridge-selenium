@@ -15,6 +15,7 @@ import com.bridge.dao.Ali1688OfferDAO;
 import com.bridge.dao.Ali1688ProductDAO;
 import com.bridge.dao.AmazonDAO;
 import com.bridge.dao.BaiduLecaiDAO;
+import com.bridge.dao.OrderListDAO;
 import com.bridge.dao.TaobaoDAO;
 
 public class BasePage {
@@ -36,9 +37,8 @@ public class BasePage {
 
 	protected Ali1688ProductDAO aliProductDAO = new Ali1688ProductDAO();
 
-	protected Ali1688AddToCartDAO addToCartDAO = new Ali1688AddToCartDAO();
+	protected OrderListDAO rldao = new OrderListDAO();
 
-	
 	public BasePage(final WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);

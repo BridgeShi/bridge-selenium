@@ -183,7 +183,7 @@ public class ProductDetailPage extends BasePage{
 			LOG.info("添加购物车失败，URL："+driver.getCurrentUrl());
 			addToCart = false;
 		}finally{
-			addToCartDAO.updateAddToCart(driver.getCurrentUrl(), addToCart);
+			rldao.updateAddToCart(driver.getCurrentUrl(), addToCart);
 		}
 	}
 

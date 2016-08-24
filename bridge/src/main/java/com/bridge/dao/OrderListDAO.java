@@ -1,47 +1,49 @@
 package com.bridge.dao;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
-public class Ali1688AddToCartDAO {
+public class OrderListDAO {
 
 	private Connection conn = null;
 	private PreparedStatement preparedStmt = null;
 	private ResultSet rs = null;
-
-	public String[][] getProductsToBeOrder() throws SQLException{
-
-		String sql = "SELECT productUrl,firstOption,secondOption,amount FROM ali1688_to_be_ordered_list";
-		String[][] productsToBeOrder = null;
-		int resultRow = 0 ;
+	
+	public ArrayList<PreOrderList> getPreOrderList() throws SQLException {
+		
+		String query = "SELECT url, firstOption, secondOption, qty FROM Ali1688_PreOrder_List";
+		ArrayList<PreOrderList> objList = new ArrayList<PreOrderList>();
+		
 		try {
+
 			conn = DBManager.getConnection();
-			
-			/*String query_set_utf8 = "set names utf8";
-			Statement stmt = conn.createStatement();
-			stmt.executeQuery(query_set_utf8);*/
-			
-			preparedStmt = conn.prepareStatement(sql);
-			
+
+			preparedStmt = conn.prepareStatement(query);
+
+			// execute the query, and get a java resultset
 			rs = preparedStmt.executeQuery();
+			
+			// iterate through the java resultset
 			while (rs.next()) {
-				resultRow++;
+				PreOrderList obj = new PreOrderList();
+				
+				obj.setUrl(rs.getString("url"));
+				obj.setFirstOption(rs.getString("firstOption"));
+				obj.setSecondOption(rs.getString("secondOption"));
+				obj.setQty(rs.getString("qty"));
+
+				objList.add(obj);
 			}
-			productsToBeOrder = new String[resultRow][4];
-			
-			rs = preparedStmt.executeQuery();
-			for (int i = 0; rs.next(); i++) {
-				for (int j = 0; j < 4; j++) {
-					productsToBeOrder[i][j] = rs.getString(j + 1);
-				}
-			}			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
+			
 			if (preparedStmt != null) {
 				preparedStmt.close();
 			}
@@ -51,16 +53,17 @@ public class Ali1688AddToCartDAO {
 			if (conn != null) {
 				conn.close();
 			}
+			return objList;
 		}
-		
-		return productsToBeOrder;
+
 	}
+
 	
 public void updateAddToCart(String productUrl,boolean orderStatus) throws Exception {
 		
-		String sql = "update ali1688_to_be_ordered_list"
-				+ " set orderSuccess = ?"
-				+ " where productUrl = ?";
+		String sql = "update Ali1688_PreOrder_List"
+				+ " set result = ?"
+				+ " where url = ?";
 
 		try {
 			conn = DBManager.getConnection();
@@ -80,5 +83,4 @@ public void updateAddToCart(String productUrl,boolean orderStatus) throws Except
 			}
 		}
 	}
-
 }
