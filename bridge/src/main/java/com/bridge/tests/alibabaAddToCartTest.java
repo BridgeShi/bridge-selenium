@@ -4,8 +4,6 @@ package com.bridge.tests;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.bridge.dao.Ali1688AddToCartDAO;
-
 //import org.testng.annotations.Test;
 
 import com.bridge.dao.OrderListDAO;

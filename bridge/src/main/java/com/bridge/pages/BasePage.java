@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import com.bridge.dao.Ali1688AddToCartDAO;
 import com.bridge.dao.Ali1688CategoryDAO;
 import com.bridge.dao.Ali1688DAO;
 import com.bridge.dao.Ali1688OfferDAO;
