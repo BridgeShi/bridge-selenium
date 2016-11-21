@@ -1,4 +1,4 @@
-package com.bridge.tests;
+package com.bridge.tests.alibaba;
 
 
 import java.sql.SQLException;

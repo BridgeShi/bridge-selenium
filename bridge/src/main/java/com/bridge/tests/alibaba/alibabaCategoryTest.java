@@ -1,4 +1,4 @@
-package com.bridge.tests;
+package com.bridge.tests.alibaba;
 
 import java.util.List;
 
@@ -8,7 +8,9 @@ import org.openqa.selenium.WebElement;
 
 //import org.testng.annotations.Test;
 
+
 import com.bridge.pages.alibaba.CategoryPage;
+import com.bridge.tests.BaseTest;
 
 public class alibabaCategoryTest extends BaseTest{
 	

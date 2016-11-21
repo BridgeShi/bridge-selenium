@@ -1,4 +1,4 @@
-package com.bridge.tests;
+package com.bridge.tests.alibaba;
 
 
 import org.openqa.selenium.By;
@@ -8,6 +8,7 @@ import com.bridge.pages.alibaba.LoginPage;
 import com.bridge.dao.Account;
 import com.bridge.dao.AccountDAO;
 import com.bridge.pages.alibaba.ItemListPage;
+import com.bridge.tests.BaseTest;
 import com.bridge.util.WebDriverUtil;
 
 public class alibaba extends BaseTest{

@@ -1,4 +1,4 @@
-package com.bridge.tests;
+package com.bridge.tests.alibaba;
 
 
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.bridge.pages.alibaba.ProductListPage;
 import com.bridge.pages.alibaba.CompanyOfferListPage;
+import com.bridge.tests.BaseTest;
 
 
 public class alibabaShopListTest extends BaseTest{

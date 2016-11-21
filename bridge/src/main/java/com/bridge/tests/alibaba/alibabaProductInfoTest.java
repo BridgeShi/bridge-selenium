@@ -1,17 +1,13 @@
-package com.bridge.tests;
-
-import java.util.List;
-import java.util.Set;
+package com.bridge.tests.alibaba;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openqa.selenium.WebElement;
 
 //import org.testng.annotations.Test;
 
-import com.bridge.pages.alibaba.CategoryPage;
+
 import com.bridge.pages.alibaba.ProductDetailPage;
-import com.bridge.pages.alibaba.ProductListPage;
+import com.bridge.tests.BaseTest;
 
 public class alibabaProductInfoTest extends BaseTest{
 	
