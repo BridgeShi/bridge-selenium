@@ -10,6 +10,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.bridge.dao.Ali1688CategoryDAO;
 import com.bridge.dao.Ali1688DAO;
+import com.bridge.dao.Ali1688EnProductDAO;
 import com.bridge.dao.Ali1688OfferDAO;
 import com.bridge.dao.Ali1688ProductDAO;
 import com.bridge.dao.AmazonDAO;
@@ -36,6 +37,8 @@ public class BasePage {
 
 	protected Ali1688ProductDAO aliProductDAO = new Ali1688ProductDAO();
 
+	protected Ali1688EnProductDAO aliEnProductDAO = new Ali1688EnProductDAO();
+	
 	protected OrderListDAO rldao = new OrderListDAO();
 
 	public BasePage(final WebDriver driver) {

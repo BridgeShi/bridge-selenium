@@ -27,18 +27,19 @@ public class alibabaEnProductInfoTest extends BaseTest{
 		LOG.info("open url:"+url);
 		driver.get(url);
 		
-		ArrayList<String> urlList = productListPage.getProduct(pages);
+		ArrayList<String[]> productList = productListPage.getProduct(pages);
 		
-		for(String productUrl:urlList){
-			getProductDetail(productUrl);
+		for(String[] product:productList){
+			//LOG.info(product[0]);
+			getProductDetail(product);
 		}
 	}
 	
-	public static void getProductDetail(String url){
+	public static void getProductDetail(String[] product){
 		ProductDetailEnPage productDetailPage = new ProductDetailEnPage(driver);
 
-		driver.get(url);
-		productDetailPage.getProductInfo();
+		driver.get(product[1]);
+		productDetailPage.getProductInfo(product);
 		
 	}
 }

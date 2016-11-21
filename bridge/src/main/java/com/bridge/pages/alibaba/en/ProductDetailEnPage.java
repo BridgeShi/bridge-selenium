@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -34,7 +35,7 @@ public class ProductDetailEnPage extends BasePage{
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void getProductInfo(){
+	public void getProductInfo(String[] product){
 		WebDriverUtil.waitForElementPresent(driver, By.className("main-inner"), 10);
 
 		String productName = productTitle.getText();
@@ -52,9 +53,18 @@ public class ProductDetailEnPage extends BasePage{
 		
 		LOG.info("商品描述："+attributesArray);
 		
-		String packageDetail = this.packageDetail.getText();
+		String packageDetail = "None";
+		try{
+			packageDetail = this.packageDetail.getText();
+		}catch(NoSuchElementException NE){
+			LOG.info("package detail is none");
+		}
 		LOG.info("Packaging Details:"+packageDetail);
-		//aliProductDAO.insert(productName, driver.getCurrentUrl(), price.toString(), weight, bargains, description, imgArray.toString(), descripImgArray.toString(), skuInfo.toString(), attributes);
+		
+		aliEnProductDAO.insert(product[0], product[1], 
+				product[2], product[3], product[4], 
+				attributesArray.toJSONString(), packageDetail
+		);
 	}
 
 

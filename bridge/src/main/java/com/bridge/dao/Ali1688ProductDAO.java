@@ -12,7 +12,7 @@ public class Ali1688ProductDAO {
 	private Connection conn = null;
 	private PreparedStatement preparedStmt = null;
 
-	private String insertquery = " insert into Ali1688_PRODUCT_INFOS (productName, productUrl, price, weight, bargainCount, "
+	private String insertquery = " insert into Ali1688_PRODUCT_INFOS (productName, productUrl, imgUrl, price, minOrder, "
 			+ "descripText, imgUrl, descripImg, skuInfo, detail) " + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	public void insert(String productName, String productUrl, String price, String weight, String bargainCount,

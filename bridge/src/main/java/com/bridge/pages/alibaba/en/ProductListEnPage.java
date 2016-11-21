@@ -27,14 +27,14 @@ public class ProductListEnPage extends BasePage{
 	@FindBy(css="a.next")
 	WebElement nextPage;
 	
-	private static ArrayList<String> productUrlList = new ArrayList<String>();
+	private static ArrayList<String[]> productInfoList = new ArrayList<String[]>();
 	
 	public ProductListEnPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(driver, this);
 	}
 	
-	public ArrayList<String> getProduct(int pages){
+	public ArrayList<String[]> getProduct(int pages){
 	
 		int totalPages = getTotalPages(this.totalPages.getText());
 
@@ -60,27 +60,30 @@ public class ProductListEnPage extends BasePage{
 			}
 		}
 		
-		return productUrlList;
+		return productInfoList;
 	}
 	
 	public void getProductInfoFromSignlePage(){
 		WebDriverUtil.waitForElementPresent(driver, By.className("l-main-wrap"), 10);
-
 		LOG.info("total products:"+productList.size());
 		for(WebElement product : productList){
+			String[] productInfo = new String[5];
 			String productName = product.findElement(By.cssSelector("img.util-valign-inner")).getAttribute("alt");
-			LOG.info("产品名称："+productName);
+			productInfo[0] = productName;
+			LOG.info("产品名称："+productInfo[0]);
 			
 			String productUrl = product.findElement(By.cssSelector(".title > a")).getAttribute("href");
-			LOG.info("产品链接："+productUrl);
+			productInfo[1] = productUrl;
+			LOG.info("产品链接："+productInfo[1]);
 			
-			if(productUrlList.contains(productUrl)){
+			/*if(productInfoList.contains(productUrl)){
 				LOG.info("该商品重复");
 				continue;
-			}
+			}*/
 			
 			String productImg = product.findElement(By.cssSelector("img.util-valign-inner")).getAttribute("data-jssrc");
-			LOG.info("产品图片："+productImg);
+			productInfo[2] = productImg;
+			LOG.info("产品图片："+productInfo[2]);
 			
 			String price = "None";
 			try{
@@ -88,13 +91,14 @@ public class ProductListEnPage extends BasePage{
 			}catch(NoSuchElementException NE){
 				LOG.info("price is none");
 			}
-			LOG.info("价格："+price);
+			productInfo[3] = price;
+			LOG.info("价格："+productInfo[3]);
 			
 			String minOrder = product.findElement(By.cssSelector(".min-order>b")).getText();
-			LOG.info("最小订单："+minOrder);
+			productInfo[4] = minOrder;
+			LOG.info("最小订单："+productInfo[4]);
 			
-			productUrlList.add(productUrl);
-			
+			productInfoList.add(productInfo);
 		}
 	}
 }
