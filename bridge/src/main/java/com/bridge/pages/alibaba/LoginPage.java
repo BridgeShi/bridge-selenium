@@ -42,8 +42,15 @@ public class LoginPage extends BasePage{
 	}
 	
 	public void login(String userName,String passWord){
+		
 		WebDriverUtil.waitForElementPresent(driver, By.id("loginchina"), 30);
 		WebDriverUtil.switchToIframe(driver, loginFrame);
+
+		if(WebDriverUtil.verifyElementExist(driver, By.id("J_Quick2Static")))
+		{
+			driver.findElement(By.id("J_Quick2Static")).click();
+		}
+			
 		LOG.debug("Entering username and password");
 		this.userName.clear();
 		this.userName.sendKeys(userName);
