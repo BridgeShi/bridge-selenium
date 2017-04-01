@@ -1,0 +1,47 @@
+package com.bridge.tests.alibaba;
+
+
+
+import org.openqa.selenium.By;
+
+import com.bridge.pages.alibaba.SimlerOfferPage;
+import com.bridge.util.WebDriverUtil;
+
+public class alibabaSimilerOffer extends alibaba{
+		
+	public static void main(String args[]) {
+		//插件路径
+		//getWebDriver();
+		getChromeDriverWithExtension("resources/taohuoyuan_v3.3.crx");
+		
+		aliLogin();
+		
+		openSmilerOffer("https://item.taobao.com/item.htm?spm=a21bo.50862.201867-rmds-1.1.9TpSDc&scm=1007.12807.73594.100200300000002&id=536210376480&pvid=2669c998-72fa-4551-9883-381c02f1b2ba");
+		
+		closeWebDriver();
+	}
+	
+	public static void openSmilerOffer(String url){
+		driver.get(url);
+
+		By sameSourcesSelector = By.cssSelector("div.jhycontent.taobao .same-sources");
+		if(WebDriverUtil.verifyElementExist(driver, sameSourcesSelector))
+			driver.findElement(sameSourcesSelector).click();
+		else
+		{
+			LOG.warn("没有同款货源");
+			return;
+		}
+		
+		String parentWindow = switchWindows(driver);
+		
+		SimlerOfferPage offerPage = new SimlerOfferPage(driver);
+		
+		offerPage.getOfferInfo();
+		
+		switchBackToParentWindow(driver, parentWindow);
+
+	}
+	
+
+}

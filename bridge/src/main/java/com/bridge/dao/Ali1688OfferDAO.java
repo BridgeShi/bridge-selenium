@@ -69,5 +69,32 @@ public class Ali1688OfferDAO {
 		}
 	}
 	
+	public void insertSimlerOffer(String productName,String productUrl,String price) {
+
+		String sql = "insert into Ali1688_Simler_Offers "
+				+ "(productname, productUrl, price)"
+				+ " values (?, ?, ?)";
+		
+		try {
+			conn = DBManager.getConnection();
+			
+			String query_set_utf8 = "set names utf8";
+			Statement stmt = conn.createStatement();
+			stmt.executeQuery(query_set_utf8);
+			
+			preparedStmt = conn.prepareStatement(sql);
+			preparedStmt.setString (1, productName);
+			preparedStmt.setString (2, productUrl);
+			preparedStmt.setString (3, price);
+
+			preparedStmt.execute();
+			conn.close();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 }
