@@ -14,12 +14,19 @@ import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.BeforeTest;
 
+import com.bridge.dao.Account;
+import com.bridge.dao.AccountDAO;
+import com.bridge.pages.taobao.LoginPage;
+
 public class BaseTest {
 
 	protected static WebDriver driver;
 	
 	protected static final Log LOG = LogFactory.getLog(BaseTest.class);
 
+	private static Account account = null;
+	private static AccountDAO accountDAO = null;
+	
 	@BeforeTest
 	public static void getWebDriver(){
 		
@@ -80,5 +87,23 @@ public class BaseTest {
 	
 	protected static void switchBackToParentWindow(WebDriver driver, String parentHandle) {
 		driver.switchTo().window(parentHandle);
+	}
+	
+	//@Test
+	public static void taobaoLogin(){
+		
+		//driver.get("https://www.taobao.com/");
+		//driver.findElement(By.linkText("亲，请登录")).click();
+		
+		LoginPage loginPage = new LoginPage(driver);
+		
+		loginPage.getUrl();
+		
+		accountDAO = new AccountDAO();
+		account = accountDAO.getAccount("taobao");
+		
+		loginPage.login(account.getAccount(), account.getPassword());
+		
+		//loginPage.login("", "");
 	}
 }
