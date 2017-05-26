@@ -27,7 +27,7 @@ public class alibabaSimilerOffer extends alibaba{
 		driver.get(url);
 		String similerOfferUrl;
 		
-		By sameSourcesSelector = By.cssSelector("div.jhycontent.taobao .same-sources");
+		By sameSourcesSelector = By.cssSelector("div.jhycontent.taobao .lookmore");
 		if(WebDriverUtil.verifyElementExist(driver, sameSourcesSelector))
 			similerOfferUrl = driver.findElement(sameSourcesSelector).getAttribute("href");
 		else
@@ -38,7 +38,9 @@ public class alibabaSimilerOffer extends alibaba{
 		
 		//String parentWindow = switchWindows(driver);
 		
-		driver.get(similerOfferUrl.replace("//s.1688.com/", "https://s.1688.com/"));
+		System.out.println(similerOfferUrl);
+		
+		driver.get(similerOfferUrl);
 		
 		SimlerOfferPage offerPage = new SimlerOfferPage(driver);
 		

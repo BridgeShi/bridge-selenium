@@ -2,6 +2,7 @@ package com.bridge.tests;
 
 import java.io.File;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,6 +70,7 @@ public class BaseTest {
 		//driver.get(url);
 		LOG.info("start......");
 		
+		driver.manage().timeouts().implicitlyWait(60*1000, TimeUnit.SECONDS);
 		//driver = new FirefoxDriver(profile);
 	}
 	
