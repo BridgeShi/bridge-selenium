@@ -40,6 +40,12 @@ public class LoginPage extends BasePage{
 	
 	public void login(String userName,String passWord){
 		LOG.debug("Entering username and password");
+		
+		if(WebDriverUtil.verifyElementExist(driver, By.id("J_Quick2Static")))
+		{
+			driver.findElement(By.id("J_Quick2Static")).click();
+		}
+		
 		this.userName.clear();
 
 		this.userName.sendKeys(userName);
